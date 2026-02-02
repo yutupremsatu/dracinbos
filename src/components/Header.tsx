@@ -145,7 +145,7 @@ export function Header() {
             <div className="flex items-center justify-between mb-10">
               <Link href="/" className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
                 <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold">D</div>
-                <span className="text-xl font-bold text-white">DracinBox</span>
+                <span className="text-xl font-bold text-white">Dracinku</span>
               </Link>
               <button onClick={() => setSidebarOpen(false)} className="text-gray-400 hover:text-white">
                 <X className="w-6 h-6" />
