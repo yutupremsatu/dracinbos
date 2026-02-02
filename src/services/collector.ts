@@ -77,8 +77,9 @@ export async function collectReelShortData() {
         // 2. Collect from Banners (if applicable, structure varies so cautious here)
         // Ignoring banners for now to avoid specific "jump_param" complexity unless standard "book" structure matches.
 
-        // Deduplicate by book_id
-        dramas = Array.from(new Map(dramas.map(item => [item.book_id, item])).values());
+        // Deduplicate by book_id and Filter valid items
+        dramas = Array.from(new Map(dramas.map(item => [item.book_id, item])).values())
+            .filter(item => item.book_id && (item.book_title || item.book_name));
 
         // 3. Prepare for Supabase
         const upsertData = dramas.map(drama => ({
