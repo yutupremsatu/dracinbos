@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "@/styles/globals.css";
 import { Providers } from "@/components/providers";
 import { Header } from "@/components/Header";
@@ -12,8 +12,13 @@ export const metadata: Metadata = {
   title: "Dracinku - Streaming Drama Asia Gratis",
   description: "Nonton drama asia subtitle indonesia gratis di Dracinku.",
   manifest: "/manifest.json",
+};
+
+export const viewport: Viewport = {
   themeColor: "#E11D48",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
