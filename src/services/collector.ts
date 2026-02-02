@@ -25,7 +25,7 @@ export async function collectDramaBoxData(type: 'foryou' | 'latest' | 'trending'
             description: drama.introduction || drama.description,
             cover_url: drama.coverH || drama.cover,
             category: drama.categoryName,
-            tags: drama.tags ? drama.tags.split(',') : [],
+            tags: Array.isArray(drama.tags) ? drama.tags : (typeof drama.tags === 'string' && drama.tags ? drama.tags.split(',') : []),
             total_episodes: drama.totalChapter || drama.episodeCount,
             status: drama.isFinished ? 'completed' : 'ongoing',
             updated_at: new Date().toISOString()
