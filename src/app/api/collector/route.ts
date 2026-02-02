@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { collectDramaBoxData } from '@/services/collector';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const type = (searchParams.get('type') as any) || 'latest';
