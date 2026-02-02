@@ -13,15 +13,18 @@ export async function GET(request: Request) {
       .from('dramas')
       .select('*')
       .eq('platform', platform)
-      .order('updated_at', { ascending: false })
-      .limit(20);
+      .eq('platform', platform)
+      .limit(50); // Fetch more to shuffle
 
     if (error) {
       console.error("Supabase Error:", error);
       throw error;
     }
 
-    const mappedData = data.map(drama => ({
+    // Random shuffle for "For You" simulation
+    const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, 20);
+
+    const mappedData = shuffled.map(drama => ({
       bookId: drama.platform_id.replace(`${drama.platform}-`, ''),
       bookName: drama.title,
       platform: drama.platform,
