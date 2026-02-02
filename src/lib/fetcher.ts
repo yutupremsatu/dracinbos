@@ -40,9 +40,16 @@ export async function fetchJson<T>(url: string, options?: RequestInit): Promise<
   // Strict Screening for Lists
   if (Array.isArray(data)) {
     // @ts-ignore
+    // @ts-ignore
     return data.filter(item => {
-      const isValid = item.title && item.cover_url && item.platform_id;
-      const isNotDefault = item.cover_url !== 'undefined' && item.cover_url !== '';
+      // Check for either raw DB fields OR mapped API fields
+      const hasTitle = item.title || item.bookName;
+      const hasCover = item.cover_url || item.cover || item.coverWap;
+      const hasId = item.platform_id || item.bookId;
+
+      const isValid = hasTitle && hasCover && hasId;
+      const isNotDefault = hasCover !== 'undefined' && hasCover !== '';
+
       return isValid && isNotDefault;
     }) as T;
   }
