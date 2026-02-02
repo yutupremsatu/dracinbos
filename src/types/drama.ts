@@ -21,6 +21,7 @@ export interface Drama {
   bookName: string;
   coverWap?: string;
   cover?: string;
+  cover_url?: string; // Standardized field from Supabase
   chapterCount: number;
   introduction: string;
   tags?: string[];

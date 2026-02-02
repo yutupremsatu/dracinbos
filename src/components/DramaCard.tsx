@@ -8,12 +8,12 @@ interface DramaCardProps {
 
 export function DramaCard({ drama, index = 0 }: DramaCardProps) {
   return (
-    <UnifiedMediaCard 
+    <UnifiedMediaCard
       index={index}
-      title={drama.bookName}
-      cover={drama.coverWap || drama.cover || ""}
-      link={`/detail/dramabox/${drama.bookId}`}
-      episodes={drama.chapterCount}
+      title={drama.bookName || (drama as any).title} // Fallback for title
+      cover={drama.cover_url || drama.coverWap || drama.cover || ""}
+      link={`/detail/dramabox/${drama.bookId || (drama as any).platform_id?.split('-')[1]}`} // Safe fallback for ID
+      episodes={drama.chapterCount || 0}
       topLeftBadge={drama.corner ? {
         text: drama.corner.name,
         color: drama.corner.color || "#e5a00d"
