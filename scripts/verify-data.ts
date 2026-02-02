@@ -29,13 +29,16 @@ async function checkData() {
     // Show last 3 entries
     const { data } = await supabase
         .from('dramas')
-        .select('title, platform_id, updated_at')
+        .select('title, platform_id, updated_at, cover_url')
         .order('updated_at', { ascending: false })
         .limit(3);
 
     if (data && data.length > 0) {
         console.log("\nRecent Entries:");
-        data.forEach(d => console.log(`- [${d.platform_id}] ${d.title}`));
+        data.forEach(d => {
+            console.log(`- [${d.platform_id}] ${d.title}`);
+            console.log(`  Cover: ${d.cover_url}`);
+        });
     }
 }
 

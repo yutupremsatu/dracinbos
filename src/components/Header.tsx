@@ -199,39 +199,45 @@ export function Header() {
         createPortal(
           <div className="fixed inset-0 bg-background/95 backdrop-blur-xl z-[9999] overflow-hidden animate-in fade-in duration-200">
             <div className="container mx-auto px-4 py-6 h-[100dvh] flex flex-col">
-              <button
-                onClick={handleSearchClose}
-                className="p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors flex-shrink-0 text-gray-400 hover:text-white flex items-center gap-2"
-              >
-                <ArrowLeft className="w-6 h-6" />
-                <span className="hidden md:inline font-medium">Back</span>
-              </button>
-              <div className="flex-1 relative min-w-0 group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={`Search ${platformInfo.name} library...`}
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-white placeholder:text-gray-600"
-                  autoFocus
-                />
+              <div className="flex items-center gap-3 mb-4 flex-shrink-0">
+                <button
+                  onClick={handleSearchClose}
+                  className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors flex-shrink-0 text-gray-400 hover:text-white"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <div className="flex-1 relative group">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={`Search ${platformInfo.name} library...`}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-base focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-white placeholder:text-gray-600"
+                    autoFocus
+                  />
+                </div>
+                <button
+                  onClick={handleSearchClose}
+                  className="hidden md:flex p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors flex-shrink-0 text-gray-400 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <button
-                onClick={handleSearchClose}
-                className="hidden md:flex p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors flex-shrink-0 text-gray-400 hover:text-white"
-              >
-                <X className="w-6 h-6" />
-              </button>
 
               {/* Platform indicator */}
-              <div className="mb-6 flex items-center justify-between px-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span>Searching in:</span>
-                  <span className="px-3 py-1 rounded-full bg-primary/20 text-primary font-bold border border-primary/20">
-                    {platformInfo.name}
-                  </span>
-                </div>
+              <div className="mb-4 flex items-center gap-3 px-1">
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Platform:</span>
+                <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold border border-primary/20 text-[10px]">
+                  {platformInfo.name}
+                </span>
+                {normalizedQuery === "" && (
+                  <div className="flex items-center gap-2 ml-auto">
+                    <span className="text-[10px] text-muted-foreground">Trending:</span>
+                    <span className="text-[10px] text-white/50 bg-white/5 px-2 py-0.5 rounded cursor-pointer hover:text-white" onClick={() => setSearchQuery("Jodoh")}>Jodoh</span>
+                    <span className="text-[10px] text-white/50 bg-white/5 px-2 py-0.5 rounded cursor-pointer hover:text-white" onClick={() => setSearchQuery("Love")}>Love</span>
+                  </div>
+                )}
               </div>
 
               {/* Search Results */}

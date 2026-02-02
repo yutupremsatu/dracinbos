@@ -23,7 +23,7 @@ export async function collectDramaBoxData(type: 'foryou' | 'latest' | 'trending'
             platform: 'dramabox',
             title: drama.bookName,
             description: drama.introduction || drama.description,
-            cover_url: drama.coverH || drama.cover,
+            cover_url: drama.coverH || drama.coverWap || drama.cover || drama.coverV || drama.book_pic || drama.thumb_url,
             category: drama.categoryName,
             tags: Array.isArray(drama.tags) ? drama.tags : (typeof drama.tags === 'string' && drama.tags ? drama.tags.split(',') : []),
             total_episodes: drama.totalChapter || drama.episodeCount,
