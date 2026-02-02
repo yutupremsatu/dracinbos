@@ -95,7 +95,7 @@ export function Header() {
                 </div>
                 <div className="flex flex-col">
                   <span className="font-display font-bold text-xl leading-none bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">
-                    DracinBox
+                    Dracinku
                   </span>
                   <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
                     Premium Drama

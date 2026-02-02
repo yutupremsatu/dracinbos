@@ -9,8 +9,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "DracinBox - Streaming Drama Terlengkap",
-  description: "Nonton drama box office asia gratis dan tanpa iklan di DracinBox.",
+  title: "Dracinku - Streaming Drama Asia Gratis",
+  description: "Nonton drama asia subtitle indonesia gratis di Dracinku.",
   manifest: "/manifest.json",
   themeColor: "#E11D48",
   viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
