@@ -8,9 +8,10 @@ import { fetchJson } from "@/lib/fetcher";
 // ... existing imports
 
 export function useForYouDramas() {
+  const { currentPlatform } = usePlatform();
   return useQuery({
-    queryKey: ["dramas", "foryou"],
-    queryFn: () => fetchJson<Drama[]>(`${API_BASE}/foryou`),
+    queryKey: ["dramas", "foryou", currentPlatform],
+    queryFn: () => fetchJson<Drama[]>(`${API_BASE}/foryou?platform=${currentPlatform}`),
     staleTime: 1000 * 60 * 5,
   });
 }
@@ -27,9 +28,10 @@ export function useLatestDramas() {
 }
 
 export function useTrendingDramas() {
+  const { currentPlatform } = usePlatform();
   return useQuery({
-    queryKey: ["dramas", "trending"],
-    queryFn: () => fetchJson<Drama[]>(`${API_BASE}/trending`),
+    queryKey: ["dramas", "trending", currentPlatform],
+    queryFn: () => fetchJson<Drama[]>(`${API_BASE}/trending?platform=${currentPlatform}`),
     staleTime: 1000 * 60 * 5,
   });
 }
