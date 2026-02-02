@@ -19,15 +19,15 @@ export function Footer() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center shadow-lg shadow-primary/25">
             <span className="text-white font-bold text-lg">D</span>
           </div>
-          <span className="font-bold text-lg text-white">DracinBox</span>
+          <span className="font-bold text-lg text-white">Dracinku</span>
         </div>
 
         <p className="text-xs text-muted-foreground/60 text-center max-w-sm leading-relaxed">
-          Platform streaming drama asia gratis terbaik dengan pengalaman premium.
+          Nonton drama asia subtitle indonesia gratis tanpa ribet.
         </p>
 
         <p className="text-[10px] text-muted-foreground/40 text-center font-medium mt-4">
-          © {new Date().getFullYear()} DracinBox Inc. All rights reserved.
+          © {new Date().getFullYear()} Dracinku. All rights reserved.
         </p>
       </div>
     </footer>
