@@ -1,28 +1,35 @@
-import { safeJson, encryptedResponse } from "@/lib/api-utils";
+import { supabase } from "@/lib/supabase";
+import { encryptedResponse } from "@/lib/api-utils";
 import { NextResponse } from "next/server";
 
-const UPSTREAM_API = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.sansekai.my.id/api") + "/dramabox";
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const response = await fetch(`${UPSTREAM_API}/foryou`, {
-      cache: 'no-store',
-    });
-    if (!response.ok) {
-      return NextResponse.json(
-        { error: "Failed to fetch data" },
-        { status: response.status }
-      );
+    const { data, error } = await supabase
+      .from('dramas')
+      .select('*')
+      .eq('platform', 'dramabox')
+      .order('updated_at', { ascending: false })
+      .limit(20);
+
+    if (error) {
+      console.error("Supabase Error:", error);
+      throw error;
     }
 
-    const data = await safeJson(response);
-    
-    // Filter out items without bookId or bookName to prevent blank cards
-    const filteredData = Array.isArray(data) 
-      ? data.filter((item: any) => item && item.bookId) 
-      : [];
+    const mappedData = data.map(drama => ({
+      bookId: drama.platform_id.replace('dramabox-', ''),
+      bookName: drama.title,
+      coverWap: drama.cover_url,
+      cover: drama.cover_url,
+      chapterCount: drama.total_episodes,
+      introduction: drama.description,
+      tags: drama.tags || [],
+      corner: { name: 'Rec', color: '#8B5CF6' }
+    }));
 
-    return encryptedResponse(filteredData);
+    return encryptedResponse(mappedData);
   } catch (error) {
     console.error("API Error:", error);
     return NextResponse.json(
