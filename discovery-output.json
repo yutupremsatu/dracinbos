@@ -1,0 +1,50 @@
+[
+  {
+    "domain": "melolo.com",
+    "sitemaps": "https://melolo.com/sitemap.xml",
+    "status": 200,
+    "length": 20340627
+  },
+  {
+    "domain": "www.reelshort.com",
+    "sitemaps": "https://www.reelshort.com/sitemap.xml",
+    "status": 404,
+    "length": 38616
+  },
+  {
+    "domain": "www.dramabox.com",
+    "sitemaps": "https://www.dramabox.com/sitemap.xml",
+    "status": 404,
+    "length": 22135
+  },
+  {
+    "domain": "www.netshort.com",
+    "sitemaps": "https://netshort.com/sitemap.xml",
+    "status": 200,
+    "length": 6226
+  },
+  {
+    "domain": "www.shorttv.id",
+    "sitemaps": "https://www.shorttv.id/sitemap.xml",
+    "status": 500,
+    "length": 0
+  },
+  {
+    "domain": "www.moboreels.com",
+    "sitemaps": "https://www.moboreels.com/sitemap.xml",
+    "status": 404,
+    "length": 63141
+  },
+  {
+    "domain": "www.goodshort.com",
+    "sitemaps": "https://www.goodshort.com/sitemap.xml",
+    "status": 404,
+    "length": 47236
+  },
+  {
+    "domain": "www.topshort.tv",
+    "sitemaps": "https://www.topshort.tv/sitemap.xml",
+    "status": 500,
+    "length": 0
+  }
+]

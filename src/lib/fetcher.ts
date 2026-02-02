@@ -22,18 +22,30 @@ export async function fetchJson<T>(url: string, options?: RequestInit): Promise<
     } catch {
       errorData = { message: response.statusText };
     }
-    
+
     // Throw error with status to be caught by React Query
     throw new ApiError(
-        errorData?.error || errorData?.message || "An error occurred", 
-        response.status, 
-        errorData
+      errorData?.error || errorData?.message || "An error occurred",
+      response.status,
+      errorData
     );
   }
 
   const json = await response.json();
+  let data = json;
   if (json.data && typeof json.data === "string") {
-    return decryptData(json.data);
+    data = decryptData(json.data);
   }
-  return json;
+
+  // Strict Screening for Lists
+  if (Array.isArray(data)) {
+    // @ts-ignore
+    return data.filter(item => {
+      const isValid = item.title && item.cover_url && item.platform_id;
+      const isNotDefault = item.cover_url !== 'undefined' && item.cover_url !== '';
+      return isValid && isNotDefault;
+    }) as T;
+  }
+
+  return data as T;
 }
