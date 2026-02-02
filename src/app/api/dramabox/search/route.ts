@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
     const { data, error } = await supabase
       .from('dramas')
       .select('*')
-      .eq('platform', 'dramabox')
       .ilike('title', `%${query}%`)
       .limit(50);
 
