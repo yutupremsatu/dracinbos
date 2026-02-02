@@ -36,7 +36,7 @@ export default function LatestPage() {
                                 index={index}
                                 title={drama.bookName}
                                 cover={drama.coverWap || drama.cover || ""}
-                                link={`/detail/dramabox/${drama.bookId}`}
+                                link={`/detail/${drama.platform || 'dramabox'}/${drama.bookId}`}
                                 episodes={drama.chapterCount}
                                 topLeftBadge={drama.corner ? {
                                     text: drama.corner.name,

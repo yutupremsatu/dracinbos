@@ -15,10 +15,13 @@ export function useForYouDramas() {
   });
 }
 
+import { usePlatform } from "./usePlatform";
+
 export function useLatestDramas() {
+  const { currentPlatform } = usePlatform();
   return useQuery({
-    queryKey: ["dramas", "latest"],
-    queryFn: () => fetchJson<Drama[]>(`${API_BASE}/latest`),
+    queryKey: ["dramas", "latest", currentPlatform],
+    queryFn: () => fetchJson<Drama[]>(`${API_BASE}/latest?platform=${currentPlatform}`),
     staleTime: 1000 * 60 * 5,
   });
 }
@@ -37,8 +40,8 @@ export function useSearchDramas(query: string) {
   return useQuery({
     queryKey: ["dramas", "search", normalizedQuery],
     queryFn: async () => {
-         if (!normalizedQuery) return [];
-         return fetchJson<SearchResult[]>(`${API_BASE}/search?query=${encodeURIComponent(normalizedQuery)}`);
+      if (!normalizedQuery) return [];
+      return fetchJson<SearchResult[]>(`${API_BASE}/search?query=${encodeURIComponent(normalizedQuery)}`);
     },
     enabled: normalizedQuery.length > 0,
     staleTime: 1000 * 60 * 2,

@@ -32,6 +32,7 @@ export interface Drama {
   rankVo?: RankVo;
   shelfTime?: string;
   inLibrary: boolean;
+  platform?: string;
 }
 
 export interface SearchResult {
