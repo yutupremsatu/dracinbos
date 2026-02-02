@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, X, Play, Menu, Home, Compass, MonitorPlay, Zap } from "lucide-react";
+import { Search, X, Play, Menu, Home, Compass, MonitorPlay, Zap, ArrowLeft } from "lucide-react";
 import { useSearchDramas } from "@/hooks/useDramas";
 import { useReelShortSearch } from "@/hooks/useReelShort";
 import { useNetShortSearch } from "@/hooks/useNetShort";
@@ -199,25 +199,30 @@ export function Header() {
         createPortal(
           <div className="fixed inset-0 bg-background/95 backdrop-blur-xl z-[9999] overflow-hidden animate-in fade-in duration-200">
             <div className="container mx-auto px-4 py-6 h-[100dvh] flex flex-col">
-              <div className="flex items-center gap-4 mb-6 flex-shrink-0">
-                <div className="flex-1 relative min-w-0 group">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={`Search ${platformInfo.name} library...`}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-white placeholder:text-gray-600"
-                    autoFocus
-                  />
-                </div>
-                <button
-                  onClick={handleSearchClose}
-                  className="p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors flex-shrink-0 text-gray-400 hover:text-white"
-                >
-                  <X className="w-6 h-6" />
-                </button>
+              <button
+                onClick={handleSearchClose}
+                className="p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors flex-shrink-0 text-gray-400 hover:text-white flex items-center gap-2"
+              >
+                <ArrowLeft className="w-6 h-6" />
+                <span className="hidden md:inline font-medium">Back</span>
+              </button>
+              <div className="flex-1 relative min-w-0 group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={`Search ${platformInfo.name} library...`}
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-white placeholder:text-gray-600"
+                  autoFocus
+                />
               </div>
+              <button
+                onClick={handleSearchClose}
+                className="hidden md:flex p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors flex-shrink-0 text-gray-400 hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
 
               {/* Platform indicator */}
               <div className="mb-6 flex items-center justify-between px-2">
@@ -268,8 +273,15 @@ export function Header() {
                           onClick={handleSearchClose}
                           className="flex gap-5 p-4 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all group"
                         >
-                          <div className="w-20 h-28 rounded-2xl overflow-hidden flex-shrink-0 relative shadow-lg">
-                            <img src={img} alt={title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                          <div className="w-20 h-28 rounded-2xl overflow-hidden flex-shrink-0 relative shadow-lg bg-white/5">
+                            <img
+                              src={img?.startsWith('http') ? img : `https:${img}`}
+                              alt={title}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = "https://placehold.co/400x600/1a1a1a/ffffff?text=No+Poster";
+                              }}
+                            />
                           </div>
                           <div className="flex-1 min-w-0 py-1">
                             <h3 className="font-bold text-lg text-white mb-1 group-hover:text-primary transition-colors line-clamp-1">{title}</h3>

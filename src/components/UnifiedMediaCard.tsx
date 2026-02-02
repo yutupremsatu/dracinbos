@@ -29,15 +29,15 @@ export function UnifiedMediaCard({
   topRightBadge,
   index = 0,
 }: UnifiedMediaCardProps) {
-  
+
   // SHARED STYLES
   // Responsive: Mobile (Default) -> smaller | Desktop (md:) -> regular 10px
   // Using text-[8px] for mobile and text-[10px] for desktop
   // Note: Removed absolute positioning from BASE, moving it to container
   const BADGE_BASE = "px-1 py-0.5 md:px-1.5 rounded font-bold text-white shadow-sm leading-none tracking-wide flex items-center justify-center font-sans text-[8px] md:text-[10px]";
-  
-  const BADGE_FONT = { 
-    lineHeight: "1",      
+
+  const BADGE_FONT = {
+    lineHeight: "1",
     fontFamily: "inherit"
   };
 
@@ -50,13 +50,20 @@ export function UnifiedMediaCard({
       {/* Visual Container */}
       <div className="aspect-[2/3] relative overflow-hidden rounded-xl bg-muted/20">
         <img
-          src={cover.includes(".heic") 
-            ? `https://wsrv.nl/?url=${encodeURIComponent(cover)}&output=jpg` 
-            : cover}
+          src={
+            cover?.startsWith('//')
+              ? `https:${cover}`
+              : cover?.includes(".heic")
+                ? `https://wsrv.nl/?url=${encodeURIComponent(cover)}&output=jpg`
+                : cover
+          }
           alt={title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           loading="lazy"
           referrerPolicy="no-referrer"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "https://placehold.co/400x600/1a1a1a/ffffff?text=No+Poster";
+          }}
         />
 
         {/* Gradient Overlay */}
@@ -64,13 +71,13 @@ export function UnifiedMediaCard({
 
         {/* Badges Container - Flexbox to prevent overlap */}
         <div className="absolute top-1.5 left-1.5 right-1.5 md:top-2 md:left-2 md:right-2 flex justify-between items-start pointer-events-none z-10">
-          
+
           {/* Top Left Badge - Allowed to truncate */}
-          <div className="flex-1 min-w-0 pr-1 flex justify-start"> 
+          <div className="flex-1 min-w-0 pr-1 flex justify-start">
             {topLeftBadge && (
-              <div 
+              <div
                 className={`${BADGE_BASE} truncate max-w-full`}
-                style={{ 
+                style={{
                   ...BADGE_FONT,
                   backgroundColor: topLeftBadge.color || "#E52E2E",
                   color: topLeftBadge.textColor || "#FFFFFF"
@@ -84,9 +91,9 @@ export function UnifiedMediaCard({
           {/* Top Right Badge - Fixed width/Shrink 0 */}
           <div className="shrink-0 flex justify-end">
             {topRightBadge && (
-              <div 
+              <div
                 className={`${BADGE_BASE} ${topRightBadge.isTransparent ? 'backdrop-blur-sm' : ''}`}
-                style={{ 
+                style={{
                   ...BADGE_FONT,
                   backgroundColor: topRightBadge.isTransparent ? "rgba(0,0,0,0.6)" : (topRightBadge.color || "rgba(0,0,0,0.6)"),
                   color: topRightBadge.textColor || "#FFFFFF"
