@@ -11,42 +11,44 @@ export interface PlatformInfo {
   apiBase: string;
 }
 
+import { getApiBaseUrl } from "@/utils/api";
+
 export const PLATFORMS: PlatformInfo[] = [
   {
     id: "dramabox",
     name: "DramaBox",
     logo: "/dramabox.webp",
-    apiBase: "/api/dramabox",
+    apiBase: `${getApiBaseUrl()}/api/dramabox`,
   },
   {
     id: "reelshort",
     name: "ReelShort",
     logo: "/reelshort.webp",
-    apiBase: "/api/reelshort",
+    apiBase: `${getApiBaseUrl()}/api/reelshort`,
   },
   {
     id: "netshort",
     name: "NetShort",
     logo: "/netshort.webp",
-    apiBase: "/api/netshort",
+    apiBase: `${getApiBaseUrl()}/api/netshort`,
   },
   {
     id: "melolo",
     name: "Melolo",
     logo: "/melolo.webp",
-    apiBase: "/api/melolo",
+    apiBase: `${getApiBaseUrl()}/api/melolo`,
   },
   {
     id: "flickreels",
     name: "FlickReels",
     logo: "/flickreels.png",
-    apiBase: "/api/flickreels",
+    apiBase: `${getApiBaseUrl()}/api/flickreels`,
   },
   {
     id: "freereels",
     name: "FreeReels",
     logo: "/freereels.webp",
-    apiBase: "/api/freereels",
+    apiBase: `${getApiBaseUrl()}/api/freereels`,
   },
 ];
 

@@ -6,7 +6,8 @@ import type {
 
 import { fetchJson } from "@/lib/fetcher";
 
-const API_BASE = "/api/reelshort";
+import { getApiBaseUrl } from "@/utils/api";
+const API_BASE = `${getApiBaseUrl()}/api/reelshort`;
 
 export function useReelShortHomepage() {
   return useQuery({
@@ -22,8 +23,8 @@ export function useReelShortSearch(query: string) {
   return useQuery({
     queryKey: ["reelshort", "search", normalizedQuery],
     queryFn: async () => {
-         if (!normalizedQuery) return { success: true, data: [] };
-         return fetchJson<ReelShortSearchResponse>(`${API_BASE}/search?query=${encodeURIComponent(normalizedQuery)}`);
+      if (!normalizedQuery) return { success: true, data: [] };
+      return fetchJson<ReelShortSearchResponse>(`${API_BASE}/search?query=${encodeURIComponent(normalizedQuery)}`);
     },
     enabled: normalizedQuery.length > 0,
     staleTime: 1000 * 60 * 2,

@@ -12,8 +12,11 @@ export class ApiError extends Error {
   }
 }
 
+import { getApiBaseUrl } from "@/utils/api";
+
 export async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(url, options);
+  const fullUrl = url.startsWith("http") ? url : `${getApiBaseUrl()}${url}`;
+  const response = await fetch(fullUrl, options);
 
   if (!response.ok) {
     let errorData;

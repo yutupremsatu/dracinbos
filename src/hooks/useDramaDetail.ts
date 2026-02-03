@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import type { DramaDetailResponse, Episode } from "@/types/drama";
 
-const API_BASE = "/api/dramabox";
+import { getApiBaseUrl } from "@/utils/api";
+const API_BASE = `${getApiBaseUrl()}/api/dramabox`;
 
 import { decryptData } from "@/lib/crypto";
 
