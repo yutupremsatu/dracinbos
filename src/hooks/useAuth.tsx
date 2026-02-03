@@ -62,10 +62,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const signInWithGoogle = async () => {
+        // Always use production URL for OAuth redirect
+        const redirectUrl = process.env.NODE_ENV === 'production'
+            ? 'https://dracinbos.vercel.app/auth/callback'
+            : (typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined);
+
         const { error } = await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-                redirectTo: typeof window !== "undefined" ? `${window.location.origin}/auth/callback` : undefined,
+                redirectTo: redirectUrl,
             },
         });
         if (error) console.error("Google sign-in error:", error);
