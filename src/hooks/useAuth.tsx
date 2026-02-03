@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { supabase } from "@/lib/supabase";
+import { Capacitor } from "@capacitor/core";
 import type { User, Session } from "@supabase/supabase-js";
 
 interface AuthContextType {
@@ -62,18 +63,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const signInWithGoogle = async () => {
-        // Always use production URL for OAuth redirect
-        const redirectUrl = process.env.NODE_ENV === 'production'
-            ? 'https://dracinbos.vercel.app/auth/callback'
-            : (typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined);
+        try {
+            // 1. Detect Platform
+            if (Capacitor.isNativePlatform()) {
+                console.log("Native Platform Detected: Using Capacitor Google Auth");
+                // Import dynamically to avoid SSR issues
+                const { GoogleAuth } = await import('@codetrix-studio/capacitor-google-auth');
 
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: "google",
-            options: {
-                redirectTo: redirectUrl,
-            },
-        });
-        if (error) console.error("Google sign-in error:", error);
+                // A. Native Popup
+                const user = await GoogleAuth.signIn();
+                console.log("Native Login Success:", user);
+
+                // B. Get ID Token
+                const idToken = user.authentication.idToken;
+
+                // C. Exchange for Supabase Session
+                const { data, error } = await supabase.auth.signInWithIdToken({
+                    provider: 'google',
+                    token: idToken,
+                });
+
+                if (error) throw error;
+
+                // Force sync user after native login
+                if (data.session?.user) {
+                    await syncUserToDatabase(data.session.user);
+                }
+
+            } else {
+                console.log("Web Platform Detected: Using Standard OAuth Redirect");
+                // Always use production URL for OAuth redirect
+                const redirectUrl = process.env.NODE_ENV === 'production'
+                    ? 'https://dracinbos.vercel.app/auth/callback'
+                    : (typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined);
+
+                const { error } = await supabase.auth.signInWithOAuth({
+                    provider: "google",
+                    options: {
+                        redirectTo: redirectUrl,
+                    },
+                });
+                if (error) throw error;
+            }
+        } catch (error) {
+            console.error("Google sign-in error:", error);
+        }
     };
 
     const signOut = async () => {

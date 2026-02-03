@@ -1,0 +1,22 @@
+DracinBos Migration Notes
+=========================
+
+REQUIRED FILES NOT IN GIT:
+1. .env.local (This file contains your Supabase secrets!)
+2. android/app/release-key.jks (Old keystore, kept just in case)
+
+INSTRUCTIONS FOR NEW LAPTOP:
+1. Install Git and Node.js (v18+)
+2. Clone the repo:
+   git clone https://github.com/yutupremsatu/dracinbos.git
+   
+3. Copy the `.env.local` from this zip into the root folder `dracinbos/`.
+4. Install dependencies:
+   npm install
+
+5. Run:
+   npm run dev
+
+NOTE: 
+- The NEW keystore (`dracinku-release.jks`) IS inside the git repo, so you don't need to copy it manually.
+- Database is in the cloud (Supabase), so all user data will appear automatically.
