@@ -3,11 +3,10 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.dracinku.app',
   appName: 'Dracinku',
-  webDir: 'public',
+  webDir: 'public', // Exists and satisfies Capacitor CLI
   server: {
-    url: 'https://dracinbos.vercel.app',
-    allowNavigation: ['dracinbos.vercel.app', '*.vercel.app'],
     androidScheme: 'https',
+    url: 'https://dracinbos.vercel.app', // Use Vercel for SSR and API routes
     cleartext: true
   },
   plugins: {
@@ -20,3 +19,4 @@ const config: CapacitorConfig = {
 };
 
 export default config;
+

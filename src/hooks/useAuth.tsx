@@ -51,25 +51,74 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             import('@capacitor/app').then(({ App }) => {
                 App.addListener('appUrlOpen', async (data) => {
                     console.log('App opened with URL:', data.url);
-                    if (data.url.includes('auth/callback')) {
-                        // Extract code from URL (https://dracinbos.vercel.app/auth/callback?code=...)
-                        const url = new URL(data.url);
+
+                    // Close browser first
+                    try {
+                        const { Browser } = await import('@capacitor/browser');
+                        await Browser.close();
+                    } catch (e) { console.log('Browser close error (harmless):', e); }
+
+                    // Parse URL safely
+                    let url: URL;
+                    try {
+                        url = new URL(data.url);
+                    } catch {
+                        console.error('Invalid URL:', data.url);
+                        return;
+                    }
+
+                    // Handle dracinku://auth?access_token=...&refresh_token=...
+                    if (data.url.startsWith('dracinku://auth')) {
+                        const accessToken = url.searchParams.get('access_token');
+                        const refreshToken = url.searchParams.get('refresh_token');
+
+                        if (accessToken && refreshToken) {
+                            console.log('Setting session from deep link tokens...');
+                            const { error } = await supabase.auth.setSession({
+                                access_token: accessToken,
+                                refresh_token: refreshToken
+                            });
+
+                            if (error) {
+                                alert('Login Error: ' + error.message);
+                            } else {
+                                console.log('Native Login Success via deep link!');
+                                window.location.reload(); // Refresh to update UI
+                            }
+                        }
+                    }
+                    // Handle https://dracinbos.vercel.app/auth/callback?code=...
+                    else if (data.url.includes('auth/callback')) {
                         const code = url.searchParams.get('code');
 
                         if (code) {
-                            // Close In-App Browser if open
-                            try {
-                                const { Browser } = await import('@capacitor/browser');
-                                await Browser.close();
-                            } catch (e) { console.log('Browser close error (harmless):', e); }
-
-                            // Exchange code for session
+                            console.log('Exchanging code for session...');
                             const { error } = await supabase.auth.exchangeCodeForSession(code);
                             if (error) {
                                 alert('Login Error: ' + error.message);
                             } else {
-                                // Success! Session state listener will pick it up
-                                console.log('Native Login Success!');
+                                console.log('Native Login Success via code!');
+                                window.location.reload();
+                            }
+                        }
+                    }
+                    // Handle https://dracinbos.vercel.app/auth/mobile-callback?access_token=...
+                    else if (data.url.includes('mobile-callback')) {
+                        const accessToken = url.searchParams.get('access_token');
+                        const refreshToken = url.searchParams.get('refresh_token');
+
+                        if (accessToken && refreshToken) {
+                            console.log('Setting session from mobile-callback tokens...');
+                            const { error } = await supabase.auth.setSession({
+                                access_token: accessToken,
+                                refresh_token: refreshToken
+                            });
+
+                            if (error) {
+                                alert('Login Error: ' + error.message);
+                            } else {
+                                console.log('Native Login Success via mobile-callback!');
+                                window.location.reload();
                             }
                         }
                     }

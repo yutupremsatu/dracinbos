@@ -5,13 +5,11 @@ const nextConfig = {
       fullUrl: false,
     },
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
   images: {
+    unoptimized: true, // Required for Capacitor
     remotePatterns: [
       {
         protocol: "https",
@@ -22,3 +20,4 @@ const nextConfig = {
 };
 
 export default nextConfig;
+
