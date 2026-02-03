@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
 
-export default function AuthCallbackPage() {
+function AuthCallbackContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const code = searchParams.get("code");
@@ -38,11 +38,19 @@ export default function AuthCallbackPage() {
     }, [code, error, error_description, router]);
 
     return (
+        <div className="flex flex-col items-center gap-4">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <p className="text-sm text-gray-400">Menyelesaikan login...</p>
+        </div>
+    );
+}
+
+export default function AuthCallbackPage() {
+    return (
         <div className="min-h-screen flex items-center justify-center bg-gray-950 text-white">
-            <div className="flex flex-col items-center gap-4">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                <p className="text-sm text-gray-400">Menyelesaikan login...</p>
-            </div>
+            <Suspense fallback={<div className="w-8 h-8 rounded-full bg-muted animate-pulse" />}>
+                <AuthCallbackContent />
+            </Suspense>
         </div>
     );
 }
