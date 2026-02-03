@@ -3,8 +3,14 @@ import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
+const ADMIN_PASSWORD = "G@cor123";
+
+function isAuthenticated(req: Request) {
+    const authHeader = req.headers.get('x-admin-secret');
+    return authHeader === ADMIN_PASSWORD;
+}
+
 export async function GET(request: Request) {
-    // Public read
     const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -13,25 +19,28 @@ export async function GET(request: Request) {
     const { data, error } = await supabase
         .from('app_config')
         .select('*')
-        .eq('key', 'apk_url')
-        .single()
 
     if (error) {
-        // Fallback or error
-        return NextResponse.json({ apk_url: '/dracin_1.0.0.apk' }) // Default fallback if DB fails
+        return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json({ apk_url: data?.value || '/dracin_1.0.0.apk' })
+    // Convert array to key-value object
+    const config: Record<string, string> = {}
+    data?.forEach(item => {
+        config[item.key] = item.value
+    })
+
+    return NextResponse.json(config)
 }
 
 export async function POST(request: Request) {
-    const { apk_url } = await request.json()
-
-    if (!apk_url) {
-        return NextResponse.json({ error: 'Missing apk_url' }, { status: 400 })
+    if (!isAuthenticated(request)) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Use Service Role Key for Admin operations
+    const body = await request.json()
+    const { apk_url, premium_mode } = body
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
@@ -40,25 +49,33 @@ export async function POST(request: Request) {
     }
 
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
-        auth: {
-            autoRefreshToken: false,
-            persistSession: false
-        }
+        auth: { autoRefreshToken: false, persistSession: false }
     })
 
-    const { data, error } = await supabaseAdmin
-        .from('app_config')
-        .upsert({
-            key: 'apk_url',
-            value: apk_url,
-            description: 'Direct download link for the Android APK',
-            updated_at: new Date().toISOString()
-        })
-        .select()
+    const updates = []
 
-    if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 })
+    if (apk_url !== undefined) {
+        updates.push(supabaseAdmin.from('app_config').upsert({
+            key: 'apk_url', value: apk_url, updated_at: new Date().toISOString()
+        }))
     }
 
-    return NextResponse.json({ success: true, data })
+    if (premium_mode !== undefined) {
+        updates.push(supabaseAdmin.from('app_config').upsert({
+            key: 'premium_mode', value: premium_mode, updated_at: new Date().toISOString()
+        }))
+    }
+
+    if (updates.length === 0) {
+        return NextResponse.json({ error: 'No data to update' }, { status: 400 })
+    }
+
+    const results = await Promise.all(updates)
+    const errors = results.filter(r => r.error).map(r => r.error?.message)
+
+    if (errors.length > 0) {
+        return NextResponse.json({ error: errors.join(', ') }, { status: 500 })
+    }
+
+    return NextResponse.json({ success: true })
 }
