@@ -1,64 +1,68 @@
-import { createClient } from '@supabase/supabase-js'
-import { NextResponse } from 'next/server'
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
-const ADMIN_PASSWORD = "G@cor123";
+const ADMIN_SECRET = process.env.ADMIN_SECRET || "G@cor123";
 
-function isAuthenticated(req: Request) {
-    const authHeader = req.headers.get('x-admin-secret');
-    return authHeader === ADMIN_PASSWORD;
-}
+// Use Service Role to access auth.users
+const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.SUPABASE_SERVICE_ROLE_KEY || ""
+);
 
 export async function GET(request: Request) {
-    if (!isAuthenticated(request)) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    // Check admin secret
+    const secret = request.headers.get("x-admin-secret");
+    if (secret !== ADMIN_SECRET) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    try {
+        // Fetch users from Supabase Auth using admin API
+        const { data, error } = await supabaseAdmin.auth.admin.listUsers();
 
-    if (!serviceRoleKey) {
-        return NextResponse.json({ error: 'Server config missing Service Key' }, { status: 500 })
+        if (error) {
+            console.error("Error fetching users:", error);
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({
+            success: true,
+            users: data.users || [],
+            total: data.users?.length || 0
+        });
+    } catch (err: any) {
+        console.error("Users API error:", err);
+        return NextResponse.json({ error: err.message }, { status: 500 });
+    }
+}
+
+export async function DELETE(request: Request) {
+    // Check admin secret
+    const secret = request.headers.get("x-admin-secret");
+    if (secret !== ADMIN_SECRET) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
-        auth: { autoRefreshToken: false, persistSession: false }
-    })
+    try {
+        const { userId } = await request.json();
 
-    // List users with profile data
-    const { data: users, error } = await supabaseAdmin
-        .from('profiles')
-        .select(`
-            id,
-            is_whitelisted,
-            is_premium,
-            updated_at,
-            auth_user:id (
-                email,
-                app_metadata,
-                last_sign_in_at,
-                created_at
-            )
-        `)
-        .order('updated_at', { ascending: false })
+        if (!userId) {
+            return NextResponse.json({ error: "userId required" }, { status: 400 });
+        }
 
-    if (error) {
-        console.error('Error fetching users:', error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        // Delete user using admin API
+        const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
+
+        if (error) {
+            console.error("Error deleting user:", error);
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({ success: true });
+    } catch (err: any) {
+        console.error("Delete user error:", err);
+        return NextResponse.json({ error: err.message }, { status: 500 });
     }
-
-    // Flatten the data for easier UI consumption
-    const flattenedUsers = users.map((u: any) => ({
-        id: u.id,
-        is_whitelisted: u.is_whitelisted,
-        is_premium: u.is_premium,
-        updated_at: u.updated_at,
-        email: u.auth_user?.email,
-        provider: u.auth_user?.app_metadata?.provider || 'Email',
-        last_sign_in_at: u.auth_user?.last_sign_in_at,
-        created_at: u.auth_user?.created_at
-    }))
-
-    return NextResponse.json({ users: flattenedUsers })
 }
