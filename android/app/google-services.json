@@ -1,0 +1,39 @@
+{
+    "project_info": {
+        "project_number": "500800985060",
+        "project_id": "dracinku-app",
+        "storage_bucket": "dracinku-app.appspot.com"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:500800985060:android:dracinku",
+                "android_client_info": {
+                    "package_name": "com.dracinku.app"
+                }
+            },
+            "oauth_client": [
+                {
+                    "client_id": "500800985060-75mc0dfbc69ckikv9ltbqs7hpvqa7fg1.apps.googleusercontent.com",
+                    "client_type": 3
+                }
+            ],
+            "api_key": [
+                {
+                    "current_key": ""
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": [
+                        {
+                            "client_id": "500800985060-75mc0dfbc69ckikv9ltbqs7hpvqa7fg1.apps.googleusercontent.com",
+                            "client_type": 3
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}
