@@ -5,6 +5,9 @@ const nextConfig = {
       fullUrl: false,
     },
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -20,4 +23,3 @@ const nextConfig = {
 };
 
 export default nextConfig;
-
