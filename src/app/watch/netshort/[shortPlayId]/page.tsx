@@ -1,6 +1,7 @@
 // Server component with generateStaticParams for Next.js static export
 import { Suspense } from "react";
 import NetShortWatchClient from "./NetShortWatchClient";
+import { WatchAuthGuard } from "@/components/WatchAuthGuard";
 
 export function generateStaticParams() {
   return []; // Client-side only - no pre-rendering
@@ -17,7 +18,9 @@ function LoadingFallback() {
 export default function NetShortWatchPage() {
   return (
     <Suspense fallback={<LoadingFallback />}>
-      <NetShortWatchClient />
+      <WatchAuthGuard>
+        <NetShortWatchClient />
+      </WatchAuthGuard>
     </Suspense>
   );
 }

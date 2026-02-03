@@ -18,9 +18,14 @@ function AuthCallbackContent() {
             if (event === 'SIGNED_IN' && session) {
                 setStatus('success');
                 setMessage('Login berhasil!');
-                // Redirect to homepage after successful login
+
+                // Check if there's a saved redirect URL (from WatchAuthGuard)
+                const redirectUrl = localStorage.getItem('redirectAfterLogin');
+                localStorage.removeItem('redirectAfterLogin');
+
+                // Redirect to saved URL or homepage
                 setTimeout(() => {
-                    router.push('/');
+                    router.push(redirectUrl || '/');
                 }, 1000);
             } else if (event === 'SIGNED_OUT') {
                 router.push('/');
