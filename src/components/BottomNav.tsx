@@ -5,6 +5,7 @@ import { Home, Search, ChevronLeft, User, LayoutGrid } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { useUIStore } from "@/hooks/useUIStore";
 
 export function BottomNav() {
     const pathname = usePathname();
@@ -53,36 +54,34 @@ export function BottomNav() {
                     <span className="text-[10px] font-medium">Home</span>
                 </Link>
 
-                <Link
-                    href="/search"
+                <button
+                    onClick={() => useUIStore.getState().setSearchOpen(true)}
                     className={cn(
                         "flex flex-col items-center justify-center w-14 h-full relative group",
                         isActive("/search") ? "text-primary" : "text-gray-400 hover:text-white"
                     )}
                 >
                     <div className={cn(
-                        "absolute -top-1 w-8 h-1 bg-primary rounded-b-full transition-all duration-300",
-                        isActive("/search") ? "opacity-100" : "opacity-0"
+                        "absolute -top-1 w-8 h-1 bg-primary rounded-b-full transition-all duration-300 opacity-0"
                     )} />
                     <Search className="w-5 h-5 mb-1" />
                     <span className="text-[10px] font-medium">Search</span>
-                </Link>
+                </button>
 
                 {/* Center Floating Action Button Style for Categories if needed, for now LayoutGrid */}
-                <Link
-                    href="/categories"
+                <button
+                    onClick={() => useUIStore.getState().setSearchOpen(true)}
                     className={cn(
                         "flex flex-col items-center justify-center w-14 h-full relative group",
                         isActive("/categories") ? "text-primary" : "text-gray-400 hover:text-white"
                     )}
                 >
                     <div className={cn(
-                        "absolute -top-1 w-8 h-1 bg-primary rounded-b-full transition-all duration-300",
-                        isActive("/categories") ? "opacity-100" : "opacity-0"
+                        "absolute -top-1 w-8 h-1 bg-primary rounded-b-full transition-all duration-300 opacity-0"
                     )} />
                     <LayoutGrid className="w-5 h-5 mb-1" />
                     <span className="text-[10px] font-medium">Genre</span>
-                </Link>
+                </button>
 
                 <button
                     onClick={() => router.back()}
