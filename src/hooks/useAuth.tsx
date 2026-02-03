@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { supabase } from "@/lib/supabase";
+import { Capacitor } from "@capacitor/core";
 import type { User, Session } from "@supabase/supabase-js";
 
 interface AuthContextType {
@@ -67,8 +68,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const redirectUrl = 'https://dracinbos.vercel.app/auth/callback';
 
             // Detect if running natively
-            // @ts-ignore
-            const isNative = typeof window !== 'undefined' && window.Capacitor?.isNativePlatform();
+            const isNative = Capacitor.isNativePlatform();
+
+            // DEBUG ALERT (User asked to debug)
+            alert(`Debug Mode: ${isNative ? "NATIVE (In-App)" : "WEB (External)"}`);
 
             console.log(`Starting Login Flow. Native: ${isNative}`);
 
@@ -88,10 +91,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             if (isNative && data?.url) {
                 // Open auth URL in In-App Browser (Chrome Custom Tags)
-                // This keeps the user "inside" the app visually and allows return via App Links
                 console.log("Opening In-App Browser:", data.url);
-                const { Browser } = await import('@capacitor/browser');
-                await Browser.open({ url: data.url, windowName: '_self' });
+                try {
+                    const { Browser } = await import('@capacitor/browser');
+                    await Browser.open({ url: data.url });
+                } catch (e) {
+                    alert("Failed to open Browser plugin: " + e);
+                    // Fallback to standard redirect if plugin fails
+                    window.location.href = data.url;
+                }
             }
         } catch (error) {
             console.error("Google sign-in error:", error);
