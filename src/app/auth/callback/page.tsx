@@ -1,130 +1,58 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Loader2, CheckCircle, ExternalLink } from "lucide-react";
+import { Loader2, CheckCircle } from "lucide-react";
 
 function AuthCallbackContent() {
-    const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'manual'>('loading');
+    const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
     const [message, setMessage] = useState('Memproses login...');
-    const [deepLinkUrl, setDeepLinkUrl] = useState<string | null>(null);
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const code = searchParams.get("code");
-    const error = searchParams.get("error");
-    const error_description = searchParams.get("error_description");
 
     useEffect(() => {
-        handleAuthCallback();
-    }, []);
+        // Listen for auth state changes - this will fire when Supabase processes the OAuth callback
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            console.log('Auth event:', event, session ? 'has session' : 'no session');
 
-    const handleAuthCallback = async () => {
-        if (error) {
-            console.error("Auth Error:", error, error_description);
-            setStatus('error');
-            setMessage(error_description || 'Login gagal');
-            setTimeout(() => router.push("/"), 2000);
-            return;
-        }
-
-        try {
-            // Check for hash params (OAuth returns tokens in hash for implicit flow)
-            const hashParams = new URLSearchParams(window.location.hash.substring(1));
-            const accessToken = hashParams.get('access_token');
-            const refreshToken = hashParams.get('refresh_token');
-
-            // Detect if we're in a native app context (Capacitor)
-            const isNativeApp = typeof (window as any).Capacitor !== 'undefined' ||
-                window.navigator.userAgent.includes('Capacitor') ||
-                window.navigator.userAgent.includes('Android') && window.navigator.userAgent.includes('wv');
-
-            if (accessToken && refreshToken) {
-                // Set session in browser context first
-                const { error: sessionError } = await supabase.auth.setSession({
-                    access_token: accessToken,
-                    refresh_token: refreshToken
-                });
-
-                if (sessionError) {
-                    throw sessionError;
-                }
-
+            if (event === 'SIGNED_IN' && session) {
                 setStatus('success');
                 setMessage('Login berhasil!');
-
-                if (isNativeApp) {
-                    // For APK: Redirect to mobile-callback page with tokens in URL
-                    const mobileCallbackUrl = `https://dracinbos.vercel.app/auth/mobile-callback?access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
-                    const appDeepLink = `dracinku://auth?access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
-                    setDeepLinkUrl(appDeepLink);
-
-                    setTimeout(() => {
-                        window.location.href = appDeepLink;
-                        setTimeout(() => {
-                            window.location.href = mobileCallbackUrl;
-                        }, 1000);
-                    }, 500);
-                } else {
-                    // For web browser: Simply redirect to homepage
-                    setTimeout(() => router.push('/'), 1000);
-                }
-
-            } else if (code) {
-                // Code-based flow (PKCE) - exchange code for session
-                const { data, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
-
-                if (sessionError) {
-                    throw sessionError;
-                }
-
-                if (data?.session) {
-                    setStatus('success');
-                    setMessage('Login berhasil!');
-
-                    if (isNativeApp) {
-                        const mobileCallbackUrl = `https://dracinbos.vercel.app/auth/mobile-callback?access_token=${encodeURIComponent(data.session.access_token)}&refresh_token=${encodeURIComponent(data.session.refresh_token)}`;
-                        const appDeepLink = `dracinku://auth?access_token=${encodeURIComponent(data.session.access_token)}&refresh_token=${encodeURIComponent(data.session.refresh_token)}`;
-                        setDeepLinkUrl(appDeepLink);
-
-                        setTimeout(() => {
-                            window.location.href = appDeepLink;
-                            setTimeout(() => {
-                                window.location.href = mobileCallbackUrl;
-                            }, 1000);
-                        }, 500);
-                    } else {
-                        // For web browser: Simply redirect to homepage
-                        setTimeout(() => router.push('/'), 1000);
-                    }
-                } else {
-                    throw new Error('No session returned');
-                }
-            } else {
-                // Check if session already exists
-                const { data: { session } } = await supabase.auth.getSession();
-
-                if (session) {
-                    setStatus('success');
-                    setMessage('Login berhasil!');
-                    setTimeout(() => router.push('/'), 1000);
-                } else {
+                // Redirect to homepage after successful login
+                setTimeout(() => {
                     router.push('/');
-                }
+                }, 1000);
+            } else if (event === 'SIGNED_OUT') {
+                router.push('/');
             }
-        } catch (err: any) {
-            console.error('Auth callback error:', err);
-            setStatus('error');
-            setMessage(err.message || 'Terjadi kesalahan');
-            setTimeout(() => router.push('/'), 2000);
-        }
-    };
+        });
 
-    const openApp = () => {
-        if (deepLinkUrl) {
-            window.location.href = deepLinkUrl;
-        }
-    };
+        // Also check if we're already logged in
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (session) {
+                setStatus('success');
+                setMessage('Login berhasil!');
+                setTimeout(() => {
+                    router.push('/');
+                }, 1000);
+            } else {
+                // No session yet - wait for onAuthStateChange to fire
+                // If nothing happens after 5 seconds, redirect anyway
+                setTimeout(() => {
+                    router.push('/');
+                }, 5000);
+            }
+        };
+
+        // Small delay to let Supabase process the hash
+        setTimeout(checkSession, 500);
+
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, [router]);
 
     return (
         <main className="min-h-screen flex items-center justify-center px-4 bg-gray-950">
@@ -132,7 +60,7 @@ function AuthCallbackContent() {
                 {status === 'loading' && (
                     <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto mb-4" />
                 )}
-                {(status === 'success' || status === 'manual') && (
+                {status === 'success' && (
                     <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
                 )}
                 {status === 'error' && (
@@ -141,33 +69,6 @@ function AuthCallbackContent() {
                     </div>
                 )}
                 <p className="text-xl text-white font-medium mb-4">{message}</p>
-
-                {status === 'manual' && deepLinkUrl && (
-                    <div className="space-y-4">
-                        <p className="text-gray-400 text-sm">
-                            Tekan tombol di bawah untuk kembali ke aplikasi, atau tutup tab ini dan buka aplikasi secara manual.
-                        </p>
-
-                        <button
-                            onClick={openApp}
-                            className="w-full bg-gradient-to-r from-primary to-purple-600 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition"
-                        >
-                            <ExternalLink className="w-5 h-5" />
-                            Buka Aplikasi
-                        </button>
-
-                        <button
-                            onClick={() => window.close()}
-                            className="w-full bg-white/10 text-white font-medium py-3 px-6 rounded-xl hover:bg-white/20 transition"
-                        >
-                            Tutup Tab Ini
-                        </button>
-
-                        <p className="text-gray-500 text-xs mt-6">
-                            Jika aplikasi tidak terbuka otomatis, tutup browser ini dan buka aplikasi Dracinku.
-                        </p>
-                    </div>
-                )}
 
                 {status === 'loading' && (
                     <p className="text-gray-400 mt-2">Mohon tunggu sebentar...</p>
