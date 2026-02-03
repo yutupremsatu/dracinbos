@@ -103,9 +103,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             // Detect if running natively
             const isNative = Capacitor.isNativePlatform();
 
-            // DEBUG ALERT (User asked to debug)
-            alert(`Debug Mode: ${isNative ? "NATIVE (In-App)" : "WEB (External)"}`);
-
             console.log(`Starting Login Flow. Native: ${isNative}`);
 
             const { data, error } = await supabase.auth.signInWithOAuth({
@@ -114,23 +111,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     redirectTo: redirectUrl,
                     skipBrowserRedirect: isNative, // If native, SKIP automatic redirect
                     queryParams: {
-                        access_type: 'offline',
-                        prompt: 'consent',
+                        prompt: 'select_account',
                     }
                 },
             });
 
             if (error) throw error;
 
+            // For web, the default redirect will happen automatically
+            // For native app, we skipped it, so we must open it manually
             if (isNative && data?.url) {
-                // Open auth URL in In-App Browser (Chrome Custom Tags)
-                console.log("Opening In-App Browser:", data.url);
                 try {
                     const { Browser } = await import('@capacitor/browser');
-                    await Browser.open({ url: data.url });
+
+                    // Listen for browser close/finish
+                    Browser.addListener('browserFinished', () => {
+                        // Check if user is now logged in
+                        supabase.auth.getSession().then(({ data: { session } }) => {
+                            if (session) {
+                                console.log('Native Login Success via browserFinished!');
+                                window.location.reload(); // Reload to update UI
+                            }
+                        });
+                    });
+
+                    // Open in system browser (more reliable for OAuth)
+                    await Browser.open({
+                        url: data.url,
+                        windowName: '_system' // Use system browser - NOT Custom Tab!
+                    });
                 } catch (e) {
-                    alert("Failed to open Browser plugin: " + e);
-                    // Fallback to standard redirect if plugin fails
+                    // Fallback to standard window open
+                    console.error('Browser plugin error:', e);
                     window.location.href = data.url;
                 }
             }

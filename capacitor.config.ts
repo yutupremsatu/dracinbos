@@ -3,9 +3,10 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.dracinku.app',
   appName: 'Dracinku',
-  webDir: 'out', // Next.js export directory
+  webDir: 'public',
   server: {
-    // url: 'https://dracinbos.vercel.app', // COMMENTED OUT: Load from local assets to enable native plugins
+    url: 'https://dracinbos.vercel.app',
+    allowNavigation: ['dracinbos.vercel.app', '*.vercel.app'],
     androidScheme: 'https',
     cleartext: true
   },
