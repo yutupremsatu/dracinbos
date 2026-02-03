@@ -11,7 +11,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AccessGuard } from "@/components/AccessGuard";
 import type { DramaDetailDirect, DramaDetailResponseLegacy } from "@/types/drama";
 
 function isDirectFormat(data: unknown): data is DramaDetailDirect {
@@ -134,144 +133,142 @@ export default function DramaBoxWatchClient() {
     }
 
     return (
-        <AccessGuard>
-            <main className="fixed inset-0 bg-black flex flex-col">
-                <div className="absolute top-0 left-0 right-0 z-40 h-16 pointer-events-none">
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/50 to-transparent" />
-                    <div className="relative z-10 flex items-center justify-between h-full px-4 max-w-7xl mx-auto pointer-events-auto">
-                        <Link
-                            href={`/detail/dramabox/${bookId}`}
-                            className="flex items-center gap-2 text-white/90 hover:text-white transition-colors p-2 -ml-2 rounded-full hover:bg-white/10"
-                        >
-                            <ChevronLeft className="w-6 h-6" />
-                            <span className="text-primary font-bold hidden sm:inline shadow-black drop-shadow-md">DracinBox</span>
-                        </Link>
+        <main className="fixed inset-0 bg-black flex flex-col">
+            <div className="absolute top-0 left-0 right-0 z-40 h-16 pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/50 to-transparent" />
+                <div className="relative z-10 flex items-center justify-between h-full px-4 max-w-7xl mx-auto pointer-events-auto">
+                    <Link
+                        href={`/detail/dramabox/${bookId}`}
+                        className="flex items-center gap-2 text-white/90 hover:text-white transition-colors p-2 -ml-2 rounded-full hover:bg-white/10"
+                    >
+                        <ChevronLeft className="w-6 h-6" />
+                        <span className="text-primary font-bold hidden sm:inline shadow-black drop-shadow-md">DracinBox</span>
+                    </Link>
 
-                        <div className="text-center flex-1 px-4 min-w-0">
-                            <h1 className="text-white font-medium truncate text-sm sm:text-base drop-shadow-md">
-                                {book.bookName}
-                            </h1>
-                            <p className="text-white/80 text-xs drop-shadow-md">
-                                {currentEpisodeData?.chapterName || `Episode ${currentEpisode + 1}`}
-                            </p>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <button className="p-2 text-white/90 hover:text-white transition-colors rounded-full hover:bg-white/10">
-                                        <Settings className="w-6 h-6 drop-shadow-md" />
-                                    </button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="z-[100]">
-                                    {availableQualities.map((q) => (
-                                        <DropdownMenuItem
-                                            key={q}
-                                            onClick={() => setQuality(q)}
-                                            className={quality === q ? "text-primary font-semibold" : ""}
-                                        >
-                                            {q}p
-                                        </DropdownMenuItem>
-                                    ))}
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-
-                            <button
-                                onClick={() => setShowEpisodeList(!showEpisodeList)}
-                                className="p-2 text-white/90 hover:text-white transition-colors rounded-full hover:bg-white/10"
-                            >
-                                <List className="w-6 h-6 drop-shadow-md" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex-1 w-full h-full relative bg-black flex flex-col items-center justify-center">
-                    <div className="relative w-full h-full flex items-center justify-center">
-                        {currentEpisodeData ? (
-                            <video
-                                ref={videoRef}
-                                src={getVideoUrl()}
-                                controls
-                                autoPlay
-                                onEnded={handleVideoEnded}
-                                className="w-full h-full object-contain max-h-[100dvh]"
-                                poster={currentEpisodeData.chapterImg}
-                            />
-                        ) : (
-                            <div className="absolute inset-0 flex items-center justify-center z-20">
-                                <Loader2 className="w-10 h-10 text-primary animate-spin" />
-                            </div>
-                        )}
+                    <div className="text-center flex-1 px-4 min-w-0">
+                        <h1 className="text-white font-medium truncate text-sm sm:text-base drop-shadow-md">
+                            {book.bookName}
+                        </h1>
+                        <p className="text-white/80 text-xs drop-shadow-md">
+                            {currentEpisodeData?.chapterName || `Episode ${currentEpisode + 1}`}
+                        </p>
                     </div>
 
-                    <div className="absolute bottom-20 md:bottom-12 left-0 right-0 z-40 pointer-events-none flex justify-center pb-safe-area-bottom">
-                        <div className="flex items-center gap-2 md:gap-6 pointer-events-auto bg-black/60 backdrop-blur-md px-3 py-1.5 md:px-6 md:py-3 rounded-full border border-white/10 shadow-lg transition-all scale-90 md:scale-100 origin-bottom">
-                            <button
-                                onClick={() => currentEpisode > 0 && handleEpisodeChange(currentEpisode - 1)}
-                                disabled={currentEpisode <= 0}
-                                className="p-1.5 md:p-2 rounded-full text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
-                            >
-                                <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
-                            </button>
-
-                            <span className="text-white font-medium text-xs md:text-sm tabular-nums min-w-[60px] md:min-w-[80px] text-center">
-                                Ep {currentEpisode + 1} / {totalEpisodes}
-                            </span>
-
-                            <button
-                                onClick={() => currentEpisode < totalEpisodes - 1 && handleEpisodeChange(currentEpisode + 1)}
-                                disabled={currentEpisode >= totalEpisodes - 1}
-                                className="p-1.5 md:p-2 rounded-full text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
-                            >
-                                <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {showEpisodeList && (
-                    <>
-                        <div
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
-                            onClick={() => setShowEpisodeList(false)}
-                        />
-                        <div className="fixed inset-y-0 right-0 w-72 bg-zinc-900 z-[70] overflow-y-auto border-l border-white/10 shadow-2xl animate-in slide-in-from-right">
-                            <div className="p-4 border-b border-white/10 sticky top-0 bg-zinc-900 z-10 flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <h2 className="font-bold text-white">Daftar Episode</h2>
-                                    <span className="text-xs text-white/60 bg-white/10 px-2 py-0.5 rounded-full">
-                                        Total {totalEpisodes}
-                                    </span>
-                                </div>
-                                <button
-                                    onClick={() => setShowEpisodeList(false)}
-                                    className="p-1 text-white/70 hover:text-white"
-                                >
-                                    <ChevronRight className="w-6 h-6" />
+                    <div className="flex items-center gap-2">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="p-2 text-white/90 hover:text-white transition-colors rounded-full hover:bg-white/10">
+                                    <Settings className="w-6 h-6 drop-shadow-md" />
                                 </button>
-                            </div>
-                            <div className="p-3 grid grid-cols-5 gap-2">
-                                {episodes.map((episode, idx) => (
-                                    <button
-                                        key={episode.chapterId}
-                                        onClick={() => handleEpisodeChange(idx)}
-                                        className={`
-                        aspect-square flex items-center justify-center rounded-lg text-sm font-medium transition-all
-                        ${idx === currentEpisode
-                                                ? "bg-primary text-white shadow-lg shadow-primary/20"
-                                                : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
-                                            }
-                      `}
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="z-[100]">
+                                {availableQualities.map((q) => (
+                                    <DropdownMenuItem
+                                        key={q}
+                                        onClick={() => setQuality(q)}
+                                        className={quality === q ? "text-primary font-semibold" : ""}
                                     >
-                                        {idx + 1}
-                                    </button>
+                                        {q}p
+                                    </DropdownMenuItem>
                                 ))}
-                            </div>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        <button
+                            onClick={() => setShowEpisodeList(!showEpisodeList)}
+                            className="p-2 text-white/90 hover:text-white transition-colors rounded-full hover:bg-white/10"
+                        >
+                            <List className="w-6 h-6 drop-shadow-md" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex-1 w-full h-full relative bg-black flex flex-col items-center justify-center">
+                <div className="relative w-full h-full flex items-center justify-center">
+                    {currentEpisodeData ? (
+                        <video
+                            ref={videoRef}
+                            src={getVideoUrl()}
+                            controls
+                            autoPlay
+                            onEnded={handleVideoEnded}
+                            className="w-full h-full object-contain max-h-[100dvh]"
+                            poster={currentEpisodeData.chapterImg}
+                        />
+                    ) : (
+                        <div className="absolute inset-0 flex items-center justify-center z-20">
+                            <Loader2 className="w-10 h-10 text-primary animate-spin" />
                         </div>
-                    </>
-                )}
-            </main>
-        </AccessGuard>
+                    )}
+                </div>
+
+                <div className="absolute bottom-20 md:bottom-12 left-0 right-0 z-40 pointer-events-none flex justify-center pb-safe-area-bottom">
+                    <div className="flex items-center gap-2 md:gap-6 pointer-events-auto bg-black/60 backdrop-blur-md px-3 py-1.5 md:px-6 md:py-3 rounded-full border border-white/10 shadow-lg transition-all scale-90 md:scale-100 origin-bottom">
+                        <button
+                            onClick={() => currentEpisode > 0 && handleEpisodeChange(currentEpisode - 1)}
+                            disabled={currentEpisode <= 0}
+                            className="p-1.5 md:p-2 rounded-full text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
+                        >
+                            <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
+                        </button>
+
+                        <span className="text-white font-medium text-xs md:text-sm tabular-nums min-w-[60px] md:min-w-[80px] text-center">
+                            Ep {currentEpisode + 1} / {totalEpisodes}
+                        </span>
+
+                        <button
+                            onClick={() => currentEpisode < totalEpisodes - 1 && handleEpisodeChange(currentEpisode + 1)}
+                            disabled={currentEpisode >= totalEpisodes - 1}
+                            className="p-1.5 md:p-2 rounded-full text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
+                        >
+                            <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {showEpisodeList && (
+                <>
+                    <div
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
+                        onClick={() => setShowEpisodeList(false)}
+                    />
+                    <div className="fixed inset-y-0 right-0 w-72 bg-zinc-900 z-[70] overflow-y-auto border-l border-white/10 shadow-2xl animate-in slide-in-from-right">
+                        <div className="p-4 border-b border-white/10 sticky top-0 bg-zinc-900 z-10 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <h2 className="font-bold text-white">Daftar Episode</h2>
+                                <span className="text-xs text-white/60 bg-white/10 px-2 py-0.5 rounded-full">
+                                    Total {totalEpisodes}
+                                </span>
+                            </div>
+                            <button
+                                onClick={() => setShowEpisodeList(false)}
+                                className="p-1 text-white/70 hover:text-white"
+                            >
+                                <ChevronRight className="w-6 h-6" />
+                            </button>
+                        </div>
+                        <div className="p-3 grid grid-cols-5 gap-2">
+                            {episodes.map((episode, idx) => (
+                                <button
+                                    key={episode.chapterId}
+                                    onClick={() => handleEpisodeChange(idx)}
+                                    className={`
+                    aspect-square flex items-center justify-center rounded-lg text-sm font-medium transition-all
+                    ${idx === currentEpisode
+                                            ? "bg-primary text-white shadow-lg shadow-primary/20"
+                                            : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
+                                        }
+                  `}
+                                >
+                                    {idx + 1}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </>
+            )}
+        </main>
     );
 }

@@ -7,7 +7,6 @@ import { ChevronLeft, ChevronRight, Loader2, List, AlertCircle } from "lucide-re
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import Hls from "hls.js";
-import { AccessGuard } from "@/components/AccessGuard";
 
 export default function FreeReelsWatchClient() {
   const params = useParams();
@@ -309,153 +308,151 @@ export default function FreeReelsWatchClient() {
   }
 
   return (
-    <AccessGuard>
-      <div className="fixed inset-0 bg-black flex flex-col">
-        {/* Header - Fixed Overlay */}
-        <div className="absolute top-0 left-0 right-0 z-40 h-16 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/50 to-transparent" />
+    <div className="fixed inset-0 bg-black flex flex-col">
+      {/* Header - Fixed Overlay */}
+      <div className="absolute top-0 left-0 right-0 z-40 h-16 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/50 to-transparent" />
 
-          <div className="relative z-10 flex items-center justify-between h-full px-4 max-w-7xl mx-auto pointer-events-auto">
-            <Link
-              href={`/detail/freereels/${bookId}`}
-              className="flex items-center gap-2 text-white/90 hover:text-white transition-colors p-2 -ml-2 rounded-full hover:bg-white/10"
+        <div className="relative z-10 flex items-center justify-between h-full px-4 max-w-7xl mx-auto pointer-events-auto">
+          <Link
+            href={`/detail/freereels/${bookId}`}
+            className="flex items-center gap-2 text-white/90 hover:text-white transition-colors p-2 -ml-2 rounded-full hover:bg-white/10"
+          >
+            <ChevronLeft className="w-6 h-6" />
+            <span className="text-primary font-bold hidden sm:inline shadow-black drop-shadow-md">DracinBox</span>
+          </Link>
+
+          <div className="text-center flex-1 px-4 min-w-0">
+            <h1 className="text-white font-medium truncate text-sm sm:text-base drop-shadow-md">
+              {drama.title}
+            </h1>
+            <p className="text-white/80 text-xs drop-shadow-md">
+              {currentEpisodeData ? `Episode ${(currentEpisodeData.index || currentEpisodeIndex) + 1}` : "Episode ?"}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Quality Selector */}
+            <div className="flex bg-black/40 backdrop-blur-sm rounded-lg p-1 border border-white/10">
+              <button
+                onClick={() => setVideoQuality('h264')}
+                className={cn(
+                  "text-[10px] px-2 py-1 rounded-md transition-all font-medium",
+                  videoQuality === 'h264' ? "bg-primary text-white" : "text-white/70 hover:text-white"
+                )}
+              >
+                H.264
+              </button>
+              <button
+                onClick={() => setVideoQuality('h265')}
+                className={cn(
+                  "text-[10px] px-2 py-1 rounded-md transition-all font-medium",
+                  videoQuality === 'h265' ? "bg-primary text-white" : "text-white/70 hover:text-white"
+                )}
+              >
+                H.265
+              </button>
+            </div>
+
+            <button
+              onClick={() => setShowEpisodeList(!showEpisodeList)}
+              className="p-2 text-white/90 hover:text-white transition-colors rounded-full hover:bg-white/10"
             >
-              <ChevronLeft className="w-6 h-6" />
-              <span className="text-primary font-bold hidden sm:inline shadow-black drop-shadow-md">DracinBox</span>
-            </Link>
-
-            <div className="text-center flex-1 px-4 min-w-0">
-              <h1 className="text-white font-medium truncate text-sm sm:text-base drop-shadow-md">
-                {drama.title}
-              </h1>
-              <p className="text-white/80 text-xs drop-shadow-md">
-                {currentEpisodeData ? `Episode ${(currentEpisodeData.index || currentEpisodeIndex) + 1}` : "Episode ?"}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {/* Quality Selector */}
-              <div className="flex bg-black/40 backdrop-blur-sm rounded-lg p-1 border border-white/10">
-                <button
-                  onClick={() => setVideoQuality('h264')}
-                  className={cn(
-                    "text-[10px] px-2 py-1 rounded-md transition-all font-medium",
-                    videoQuality === 'h264' ? "bg-primary text-white" : "text-white/70 hover:text-white"
-                  )}
-                >
-                  H.264
-                </button>
-                <button
-                  onClick={() => setVideoQuality('h265')}
-                  className={cn(
-                    "text-[10px] px-2 py-1 rounded-md transition-all font-medium",
-                    videoQuality === 'h265' ? "bg-primary text-white" : "text-white/70 hover:text-white"
-                  )}
-                >
-                  H.265
-                </button>
-              </div>
-
-              <button
-                onClick={() => setShowEpisodeList(!showEpisodeList)}
-                className="p-2 text-white/90 hover:text-white transition-colors rounded-full hover:bg-white/10"
-              >
-                <List className="w-6 h-6 drop-shadow-md" />
-              </button>
-            </div>
+              <List className="w-6 h-6 drop-shadow-md" />
+            </button>
           </div>
         </div>
-
-        {/* Main Video Area */}
-        <div className="flex-1 w-full h-full relative bg-black flex flex-col items-center justify-center">
-          <div className="relative w-full h-full flex items-center justify-center">
-            {currentVideoUrl ? (
-              <video
-                ref={videoRef}
-                controls
-                autoPlay
-                className="w-full h-full object-contain max-h-[100dvh]"
-                poster={drama.cover}
-                onEnded={handleVideoEnded}
-                {...({ disableRemotePlayback: true, referrerPolicy: "no-referrer" } as any)}
-                crossOrigin="anonymous"
-              >
-              </video>
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center z-20 flex-col gap-4">
-                <p className="text-white/60">URL Video tidak ditemukan</p>
-              </div>
-            )}
-          </div>
-
-          {/* Navigation Controls Overlay - Bottom */}
-          <div className="absolute bottom-20 md:bottom-12 left-0 right-0 z-40 pointer-events-none flex justify-center pb-safe-area-bottom">
-            <div className="flex items-center gap-2 md:gap-6 pointer-events-auto bg-black/60 backdrop-blur-md px-3 py-1.5 md:px-6 md:py-3 rounded-full border border-white/10 shadow-lg transition-all scale-90 md:scale-100 origin-bottom">
-              <button
-                onClick={() => handleEpisodeChange(currentEpisodeIndex - 1)}
-                disabled={currentEpisodeIndex <= 0}
-                className="p-1.5 md:p-2 rounded-full text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
-              >
-                <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
-              </button>
-
-              <span className="text-white font-medium text-xs md:text-sm tabular-nums min-w-[60px] md:min-w-[80px] text-center">
-                Ep {currentEpisodeData ? (currentEpisodeData.index || currentEpisodeIndex) + 1 : 1} / {totalEpisodes}
-              </span>
-
-              <button
-                onClick={() => handleEpisodeChange(currentEpisodeIndex + 1)}
-                disabled={currentEpisodeIndex >= totalEpisodes - 1}
-                className="p-1.5 md:p-2 rounded-full text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
-              >
-                <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Episode List Sidebar */}
-        {showEpisodeList && (
-          <>
-            <div
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
-              onClick={() => setShowEpisodeList(false)}
-            />
-            <div className="fixed inset-y-0 right-0 w-72 bg-zinc-900 z-[70] overflow-y-auto border-l border-white/10 shadow-2xl animate-in slide-in-from-right">
-              <div className="p-4 border-b border-white/10 sticky top-0 bg-zinc-900 z-10 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <h2 className="font-bold text-white">Daftar Episode</h2>
-                  <span className="text-xs text-white/60 bg-white/10 px-2 py-0.5 rounded-full">
-                    Total {totalEpisodes}
-                  </span>
-                </div>
-                <button
-                  onClick={() => setShowEpisodeList(false)}
-                  className="p-1 text-white/70 hover:text-white"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
-              </div>
-              <div className="p-3 grid grid-cols-5 gap-2">
-                {episodes.map((ep: any, idx: number) => (
-                  <button
-                    key={ep.id}
-                    onClick={() => handleEpisodeChange(idx)}
-                    className={cn(
-                      "aspect-square flex items-center justify-center rounded-lg text-sm font-medium transition-all",
-                      idx === currentEpisodeIndex
-                        ? "bg-primary text-white shadow-lg shadow-primary/20"
-                        : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
-                    )}
-                  >
-                    {(ep.index || idx) + 1}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
       </div>
-    </AccessGuard>
+
+      {/* Main Video Area */}
+      <div className="flex-1 w-full h-full relative bg-black flex flex-col items-center justify-center">
+        <div className="relative w-full h-full flex items-center justify-center">
+          {currentVideoUrl ? (
+            <video
+              ref={videoRef}
+              controls
+              autoPlay
+              className="w-full h-full object-contain max-h-[100dvh]"
+              poster={drama.cover}
+              onEnded={handleVideoEnded}
+              {...({ disableRemotePlayback: true, referrerPolicy: "no-referrer" } as any)}
+              crossOrigin="anonymous"
+            >
+            </video>
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center z-20 flex-col gap-4">
+              <p className="text-white/60">URL Video tidak ditemukan</p>
+            </div>
+          )}
+        </div>
+
+        {/* Navigation Controls Overlay - Bottom */}
+        <div className="absolute bottom-20 md:bottom-12 left-0 right-0 z-40 pointer-events-none flex justify-center pb-safe-area-bottom">
+          <div className="flex items-center gap-2 md:gap-6 pointer-events-auto bg-black/60 backdrop-blur-md px-3 py-1.5 md:px-6 md:py-3 rounded-full border border-white/10 shadow-lg transition-all scale-90 md:scale-100 origin-bottom">
+            <button
+              onClick={() => handleEpisodeChange(currentEpisodeIndex - 1)}
+              disabled={currentEpisodeIndex <= 0}
+              className="p-1.5 md:p-2 rounded-full text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
+            </button>
+
+            <span className="text-white font-medium text-xs md:text-sm tabular-nums min-w-[60px] md:min-w-[80px] text-center">
+              Ep {currentEpisodeData ? (currentEpisodeData.index || currentEpisodeIndex) + 1 : 1} / {totalEpisodes}
+            </span>
+
+            <button
+              onClick={() => handleEpisodeChange(currentEpisodeIndex + 1)}
+              disabled={currentEpisodeIndex >= totalEpisodes - 1}
+              className="p-1.5 md:p-2 rounded-full text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
+            >
+              <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Episode List Sidebar */}
+      {showEpisodeList && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
+            onClick={() => setShowEpisodeList(false)}
+          />
+          <div className="fixed inset-y-0 right-0 w-72 bg-zinc-900 z-[70] overflow-y-auto border-l border-white/10 shadow-2xl animate-in slide-in-from-right">
+            <div className="p-4 border-b border-white/10 sticky top-0 bg-zinc-900 z-10 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <h2 className="font-bold text-white">Daftar Episode</h2>
+                <span className="text-xs text-white/60 bg-white/10 px-2 py-0.5 rounded-full">
+                  Total {totalEpisodes}
+                </span>
+              </div>
+              <button
+                onClick={() => setShowEpisodeList(false)}
+                className="p-1 text-white/70 hover:text-white"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-3 grid grid-cols-5 gap-2">
+              {episodes.map((ep: any, idx: number) => (
+                <button
+                  key={ep.id}
+                  onClick={() => handleEpisodeChange(idx)}
+                  className={cn(
+                    "aspect-square flex items-center justify-center rounded-lg text-sm font-medium transition-all",
+                    idx === currentEpisodeIndex
+                      ? "bg-primary text-white shadow-lg shadow-primary/20"
+                      : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
+                  )}
+                >
+                  {(ep.index || idx) + 1}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
   );
 }
