@@ -63,16 +63,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const signInWithGoogle = async () => {
         try {
-            // Always use Web OAuth (works in both browser and APK wrapper)
-            // The redirect will come back to the app via App Links
+            // Always use production URL for OAuth redirect
             const redirectUrl = 'https://dracinbos.vercel.app/auth/callback';
 
-            console.log("Starting Google OAuth with redirect to:", redirectUrl);
+            // Detect if running natively
+            // @ts-ignore
+            const isNative = typeof window !== 'undefined' && window.Capacitor?.isNativePlatform();
 
-            const { error } = await supabase.auth.signInWithOAuth({
+            console.log(`Starting Login Flow. Native: ${isNative}`);
+
+            const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
                     redirectTo: redirectUrl,
+                    skipBrowserRedirect: isNative, // If native, SKIP automatic redirect
                     queryParams: {
                         access_type: 'offline',
                         prompt: 'consent',
@@ -81,6 +85,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             });
 
             if (error) throw error;
+
+            if (isNative && data?.url) {
+                // Open auth URL in In-App Browser (Chrome Custom Tags)
+                // This keeps the user "inside" the app visually and allows return via App Links
+                console.log("Opening In-App Browser:", data.url);
+                const { Browser } = await import('@capacitor/browser');
+                await Browser.open({ url: data.url, windowName: '_self' });
+            }
         } catch (error) {
             console.error("Google sign-in error:", error);
         }
