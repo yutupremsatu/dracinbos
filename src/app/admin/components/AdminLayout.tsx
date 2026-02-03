@@ -87,13 +87,20 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     );
 }
 
-function NavItem({ href, icon: Icon, label, active }: any) {
+interface NavItemProps {
+    href: string;
+    icon: any;
+    label: string;
+    active: boolean;
+}
+
+function NavItem({ href, icon: Icon, label, active }: NavItemProps) {
     return (
         <a
             href={href}
             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${active
-                    ? "text-white bg-primary/20"
-                    : "text-gray-400 hover:text-white hover:bg-gray-700"
+                ? "text-white bg-primary/20"
+                : "text-gray-400 hover:text-white hover:bg-gray-700"
                 }`}
         >
             <Icon className="w-5 h-5" />

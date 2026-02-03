@@ -36,15 +36,14 @@ export default function AdminUsersPage() {
         <AdminLayout title="Kelola Pengguna">
             <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left bg-gray-900	">
+                    <table className="w-full text-left bg-gray-900">
                         <thead className="bg-gray-700 text-gray-200">
                             <tr>
                                 <th className="p-4">Email</th>
                                 <th className="p-4">Provider</th>
-                                <th className="p-4 text-center">Whitelist</th>
-                                <th className="p-4 text-center">Premium</th>
                                 <th className="p-4">Created At</th>
-                                <th className="p-4 text-center">Actions</th>
+                                <th className="p-4">Last Sign In</th>
+                                <th className="p-4">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-700">
@@ -54,49 +53,14 @@ export default function AdminUsersPage() {
                                         <Mail className="w-4 h-4 text-gray-400" />
                                         {user.email}
                                     </td>
-                                    <td className="p-4 text-gray-300 capitalize">{user.provider}</td>
-                                    <td className="p-4 text-center">
-                                        <input
-                                            type="checkbox"
-                                            checked={user.is_whitelisted}
-                                            onChange={async (e) => {
-                                                const checked = e.target.checked;
-                                                const res = await fetch('/api/admin/users/status', {
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'Content-Type': 'application/json',
-                                                        'x-admin-secret': 'G@cor123'
-                                                    },
-                                                    body: JSON.stringify({ userId: user.id, is_whitelisted: checked })
-                                                });
-                                                if (res.ok) fetchUsers();
-                                            }}
-                                            className="w-4 h-4 rounded border-gray-700 bg-gray-900 text-primary focus:ring-primary"
-                                        />
-                                    </td>
-                                    <td className="p-4 text-center">
-                                        <input
-                                            type="checkbox"
-                                            checked={user.is_premium}
-                                            onChange={async (e) => {
-                                                const checked = e.target.checked;
-                                                const res = await fetch('/api/admin/users/status', {
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'Content-Type': 'application/json',
-                                                        'x-admin-secret': 'G@cor123'
-                                                    },
-                                                    body: JSON.stringify({ userId: user.id, is_premium: checked })
-                                                });
-                                                if (res.ok) fetchUsers();
-                                            }}
-                                            className="w-4 h-4 rounded border-gray-700 bg-gray-900 text-primary focus:ring-primary"
-                                        />
-                                    </td>
+                                    <td className="p-4 text-gray-300 capitalize">{user.app_metadata?.provider || 'Email'}</td>
                                     <td className="p-4 text-gray-400 text-sm">
                                         {new Date(user.created_at).toLocaleDateString()}
                                     </td>
-                                    <td className="p-4 text-center">
+                                    <td className="p-4 text-gray-400 text-sm">
+                                        {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : 'Never'}
+                                    </td>
+                                    <td className="p-4">
                                         <button className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors">
                                             <Trash2 className="w-4 h-4" />
                                         </button>

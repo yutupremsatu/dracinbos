@@ -99,6 +99,7 @@ export default function AdminContentPage() {
                                     <td className="p-4 text-gray-400 text-sm">#{drama.id}</td>
                                     <td className="p-4">
                                         <div className="w-12 h-16 bg-gray-800 rounded overflow-hidden relative">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img src={drama.poster_url} alt="" className="w-full h-full object-cover" />
                                         </div>
                                     </td>
