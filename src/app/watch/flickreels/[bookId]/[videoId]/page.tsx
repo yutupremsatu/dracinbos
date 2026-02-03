@@ -1,7 +1,6 @@
 // Server component with generateStaticParams for Next.js static export
 import { Suspense } from "react";
 import FlickReelsWatchClient from "./FlickReelsWatchClient";
-import { WatchAuthGuard } from "@/components/WatchAuthGuard";
 
 export function generateStaticParams() {
   return []; // Client-side only - no pre-rendering
@@ -18,9 +17,7 @@ function LoadingFallback() {
 export default function FlickReelsWatchPage() {
   return (
     <Suspense fallback={<LoadingFallback />}>
-      <WatchAuthGuard>
-        <FlickReelsWatchClient />
-      </WatchAuthGuard>
+      <FlickReelsWatchClient />
     </Suspense>
   );
 }

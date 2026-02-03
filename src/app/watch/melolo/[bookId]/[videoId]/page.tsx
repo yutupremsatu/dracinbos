@@ -1,7 +1,6 @@
 // Server component with generateStaticParams for Next.js static export
 import { Suspense } from "react";
 import MeloloWatchClient from "./MeloloWatchClient";
-import { WatchAuthGuard } from "@/components/WatchAuthGuard";
 
 export function generateStaticParams() {
   return []; // Client-side only - no pre-rendering
@@ -18,9 +17,7 @@ function LoadingFallback() {
 export default function MeloloWatchPage() {
   return (
     <Suspense fallback={<LoadingFallback />}>
-      <WatchAuthGuard>
-        <MeloloWatchClient />
-      </WatchAuthGuard>
+      <MeloloWatchClient />
     </Suspense>
   );
 }
