@@ -4,4 +4,5 @@
     <string name="title_activity_main">Dracinku</string>
     <string name="package_name">com.dracinku.app</string>
     <string name="custom_url_scheme">com.dracinku.app</string>
+    <string name="server_client_id">500800985060-t95fpjuin6agpntv591jmtacic9t4lc9.apps.googleusercontent.com</string>
 </resources>

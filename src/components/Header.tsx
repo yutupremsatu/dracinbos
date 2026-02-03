@@ -15,6 +15,7 @@ import { useFlickReelsSearch } from "@/hooks/useFlickReels";
 import { useFreeReelsSearch } from "@/hooks/useFreeReels";
 import { usePlatform } from "@/hooks/usePlatform";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useAppConfig } from "@/hooks/useAppConfig";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +30,7 @@ export function Header() {
   const normalizedQuery = debouncedQuery.trim();
   const [scrolled, setScrolled] = useState(false);
   const { signInWithGoogle, user } = useAuth();
+  const { apkUrl } = useAppConfig();
 
   // Scroll effect for glass header
   useEffect(() => {
@@ -128,7 +130,8 @@ export function Header() {
               </button>
 
               <Link
-                href="/app"
+                href={apkUrl}
+                target="_blank"
                 className="hidden md:flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full font-bold text-sm hover:scale-105 transition-transform"
               >
                 <Zap className="w-4 h-4 fill-black" />

@@ -40,3 +40,8 @@ DEPLOY_VPS.md
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Android Keys
+*.jks
+*.keystore
+google-services.json

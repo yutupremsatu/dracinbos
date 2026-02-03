@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Search, ChevronLeft, User, LayoutGrid } from "lucide-react";
+import { Home, Search, ChevronLeft, User, LayoutGrid, Clock, Flame } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
@@ -54,21 +54,36 @@ export function BottomNav() {
                     <span className="text-[10px] font-medium">Home</span>
                 </Link>
 
-                <button
-                    onClick={() => useUIStore.getState().setSearchOpen(true)}
+                <Link
+                    href="/latest"
                     className={cn(
                         "flex flex-col items-center justify-center w-14 h-full relative group",
-                        isActive("/search") ? "text-primary" : "text-gray-400 hover:text-white"
+                        isActive("/latest") ? "text-primary" : "text-gray-400 hover:text-white"
                     )}
                 >
                     <div className={cn(
-                        "absolute -top-1 w-8 h-1 bg-primary rounded-b-full transition-all duration-300 opacity-0"
+                        "absolute -top-1 w-8 h-1 bg-primary rounded-b-full transition-all duration-300",
+                        isActive("/latest") ? "opacity-100" : "opacity-0"
                     )} />
-                    <Search className="w-5 h-5 mb-1" />
-                    <span className="text-[10px] font-medium">Search</span>
-                </button>
+                    <Clock className="w-5 h-5 mb-1" />
+                    <span className="text-[10px] font-medium">Latest</span>
+                </Link>
 
-                {/* Center Floating Action Button Style for Categories if needed, for now LayoutGrid */}
+                <Link
+                    href="/trending"
+                    className={cn(
+                        "flex flex-col items-center justify-center w-14 h-full relative group",
+                        isActive("/trending") ? "text-primary" : "text-gray-400 hover:text-white"
+                    )}
+                >
+                    <div className={cn(
+                        "absolute -top-1 w-8 h-1 bg-primary rounded-b-full transition-all duration-300",
+                        isActive("/trending") ? "opacity-100" : "opacity-0"
+                    )} />
+                    <Flame className="w-5 h-5 mb-1" />
+                    <span className="text-[10px] font-medium">Trending</span>
+                </Link>
+
                 <button
                     onClick={() => useUIStore.getState().setSearchOpen(true)}
                     className={cn(

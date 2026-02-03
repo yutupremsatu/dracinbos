@@ -1,0 +1,21 @@
+Calculating SHA-1...
+Java Home: C:\Program Files\Java\jdk-21.0.10
+Keytool: C:\Program Files\Java\jdk-21.0.10\bin\keytool.exe
+Keystore: C:\Users\Administrator\.android\debug.keystore
+
+--- KEYTOOL OUTPUT ---
+Alias name: androiddebugkey
+Creation date: Feb 2, 2026
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: C=US, O=Android, CN=Android Debug
+Issuer: C=US, O=Android, CN=Android Debug
+Serial number: 1
+Valid from: Mon Feb 02 22:50:48 UTC 2026 until: Wed Jan 26 22:50:48 UTC 2056
+Certificate fingerprints:
+	 SHA1: FC:93:1D:53:B7:6C:40:9D:A2:0C:72:F9:CE:89:1A:78:60:53:34:59
+	 SHA256: 1A:0A:43:70:34:3F:33:C8:34:B3:91:2A:C2:94:8C:01:E0:11:9A:88:F3:07:90:30:88:50:BB:45:CB:A7:DC:0B
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 1

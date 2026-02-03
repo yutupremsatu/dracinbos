@@ -1,0 +1,26 @@
+Alias name: dracinku
+Creation date: Feb 3, 2026
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: CN=Dracinku, OU=Dev, O=Dracinku, L=Jakarta, ST=DKI, C=ID
+Issuer: CN=Dracinku, OU=Dev, O=Dracinku, L=Jakarta, ST=DKI, C=ID
+Serial number: fe6ca43b6ebb5db2
+Valid from: Tue Feb 03 09:46:55 UTC 2026 until: Sat Jun 21 09:46:55 UTC 2053
+Certificate fingerprints:
+	 SHA1: 1B:15:10:82:BF:AB:FF:BE:78:7D:4D:F6:E2:DB:01:FC:F1:B2:EA:A4
+	 SHA256: FC:64:A7:BF:22:86:E0:8E:4D:B1:A1:8C:20:DD:20:9C:4D:9E:CE:64:27:4F:28:E0:C1:8B:85:31:D3:6D:4D:AA
+Signature algorithm name: SHA384withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 3
+
+Extensions: 
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: A2 77 2F DF 18 C7 CE 57   C6 6F 62 33 80 9F FE 64  .w/....W.ob3...d
+0010: DD A6 A4 BD                                        ....
+]
+]
+

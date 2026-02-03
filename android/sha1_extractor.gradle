@@ -1,0 +1,39 @@
+task extractSha1 {
+    doLast {
+        def sha1File = new File(project.projectDir, "sha1_result.txt")
+        sha1File.text = "Calculating SHA-1...\n"
+        
+        try {
+            def javaHome = System.getProperty("java.home")
+            def keytool = new File(javaHome, "bin/keytool.exe")
+            if (!keytool.exists()) {
+                keytool = new File(javaHome, "bin/keytool") // Try without exe
+            }
+            
+            // Assume default debug keystore location
+            def userHome = System.getProperty("user.home")
+            def keystore = new File(userHome, ".android/debug.keystore")
+            
+            sha1File << "Java Home: ${javaHome}\n"
+            sha1File << "Keytool: ${keytool}\n"
+            sha1File << "Keystore: ${keystore}\n"
+            
+            if (keystore.exists()) {
+                def stdout = new ByteArrayOutputStream()
+                exec {
+                    commandLine keytool, '-list', '-v', '-keystore', keystore, '-alias', 'androiddebugkey', '-storepass', 'android'
+                    standardOutput = stdout
+                }
+                sha1File << "\n--- KEYTOOL OUTPUT ---\n"
+                sha1File << stdout.toString()
+            } else {
+                sha1File << "ERROR: Keystore not found!"
+            }
+        } catch (Exception e) {
+            sha1File << "ERROR: ${e.message}\n"
+            e.printStackTrace(new PrintWriter(new FileWriter(sha1File, true)))
+        }
+        
+        println "SHA-1 extracted to ${sha1File.absolutePath}"
+    }
+}

@@ -18,6 +18,7 @@ interface Stats {
     totalUsers: number;
     totalPlatforms: number;
     lastSync: string;
+    apkUrl?: string; // Derived from config
 }
 
 export default function AdminDashboard() {
@@ -38,10 +39,15 @@ export default function AdminDashboard() {
 
     const fetchStats = async () => {
         try {
-            const res = await fetch("/api/admin/stats");
-            if (res.ok) {
-                const data = await res.json();
-                setStats(data);
+            const [statsRes, configRes] = await Promise.all([
+                fetch("/api/admin/stats"),
+                fetch("/api/admin/config")
+            ]);
+
+            if (statsRes.ok && configRes.ok) {
+                const statsData = await statsRes.json();
+                const configData = await configRes.json();
+                setStats({ ...statsData, apkUrl: configData.apk_url });
             }
         } catch (err) {
             console.error("Failed to fetch stats:", err);
@@ -148,8 +154,48 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
+                {/* Settings Section */}
+                <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 mt-6">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <Settings className="w-5 h-5" />
+                        Aplikasi Android
+                    </h3>
+                    <div className="max-w-xl">
+                        <label className="block text-sm font-medium text-gray-400 mb-2">APK Download Link</label>
+                        <div className="flex gap-3">
+                            <input
+                                type="text"
+                                value={stats?.apkUrl || ''}
+                                onChange={(e) => setStats(prev => prev ? { ...prev, apkUrl: e.target.value } : null)}
+                                className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                                placeholder="https://..."
+                            />
+                            <button
+                                onClick={async () => {
+                                    if (!stats?.apkUrl) return;
+                                    try {
+                                        const res = await fetch('/api/admin/config', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ apk_url: stats.apkUrl })
+                                        });
+                                        if (res.ok) alert('APK Link Updated!');
+                                        else alert('Failed to update');
+                                    } catch (e) {
+                                        alert('Error updating link');
+                                    }
+                                }}
+                                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors"
+                            >
+                                Save
+                            </button>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">Link ini akan digunakan pada tombol "Get App" di website.</p>
+                    </div>
+                </div>
+
                 {/* Quick Actions */}
-                <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 mt-6">
                     <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
                     <div className="flex flex-wrap gap-3">
                         <button

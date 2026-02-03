@@ -146,19 +146,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const signInWithGoogle = async () => {
         try {
-            // Always use production URL for OAuth redirect
-            const redirectUrl = 'https://dracinbos.vercel.app/auth/callback';
-
             // Detect if running natively
             const isNative = Capacitor.isNativePlatform();
 
             console.log(`Starting Login Flow. Native: ${isNative}`);
 
+            // 1. Try Native Login first if on Capacitor (shows Google One Tap popup)
+            if (isNative) {
+                try {
+                    const { signInWithGoogleNative } = await import('@/utils/native-auth');
+                    const { data, error } = await signInWithGoogleNative();
+
+                    if (error) throw error;
+
+                    if (data?.session) {
+                        console.log('Native Login Success!');
+                        window.location.reload(); // Reload to update UI
+                        return;
+                    }
+                } catch (err: any) {
+                    console.error('Native login failed, falling back to web:', err);
+                    // Continue to web fallback below
+                }
+            }
+
+            // 2. Web Login Fallback (or if native fails/not available)
+            const redirectUrl = 'https://dracinbos.vercel.app/auth/callback';
+
             const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
                     redirectTo: redirectUrl,
-                    skipBrowserRedirect: isNative, // If native, SKIP automatic redirect
+                    skipBrowserRedirect: isNative,
                     queryParams: {
                         prompt: 'select_account',
                     }
@@ -179,7 +198,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                         supabase.auth.getSession().then(({ data: { session } }) => {
                             if (session) {
                                 console.log('Native Login Success via browserFinished!');
-                                window.location.reload(); // Reload to update UI
+                                window.location.reload();
                             }
                         });
                     });
@@ -187,10 +206,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     // Open in system browser (more reliable for OAuth)
                     await Browser.open({
                         url: data.url,
-                        windowName: '_system' // Use system browser - NOT Custom Tab!
+                        windowName: '_system'
                     });
                 } catch (e) {
-                    // Fallback to standard window open
                     console.error('Browser plugin error:', e);
                     window.location.href = data.url;
                 }
@@ -201,8 +219,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const signOut = async () => {
+        // 1. Native Sign Out (if applicable)
+        if (Capacitor.isNativePlatform()) {
+            try {
+                const { signOutNative } = await import('@/utils/native-auth');
+                await signOutNative();
+            } catch (e) {
+                console.error('Native sign out error:', e);
+            }
+        }
+
+        // 2. Supabase Sign Out (removes session)
         const { error } = await supabase.auth.signOut();
         if (error) console.error("Sign out error:", error);
+
+        // 3. Force reload to clear any React state
+        window.location.reload();
     };
 
     return (
