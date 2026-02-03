@@ -34,6 +34,11 @@ function AuthCallbackContent() {
             const accessToken = hashParams.get('access_token');
             const refreshToken = hashParams.get('refresh_token');
 
+            // Detect if we're in a native app context (Capacitor)
+            const isNativeApp = typeof (window as any).Capacitor !== 'undefined' ||
+                window.navigator.userAgent.includes('Capacitor') ||
+                window.navigator.userAgent.includes('Android') && window.navigator.userAgent.includes('wv');
+
             if (accessToken && refreshToken) {
                 // Set session in browser context first
                 const { error: sessionError } = await supabase.auth.setSession({
@@ -48,23 +53,22 @@ function AuthCallbackContent() {
                 setStatus('success');
                 setMessage('Login berhasil!');
 
-                // For APK: Redirect to mobile-callback page with tokens in URL
-                // This page will run in APK's WebView and can set the session there
-                const mobileCallbackUrl = `https://dracinbos.vercel.app/auth/mobile-callback?access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
+                if (isNativeApp) {
+                    // For APK: Redirect to mobile-callback page with tokens in URL
+                    const mobileCallbackUrl = `https://dracinbos.vercel.app/auth/mobile-callback?access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
+                    const appDeepLink = `dracinku://auth?access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
+                    setDeepLinkUrl(appDeepLink);
 
-                // Custom scheme deep link
-                const appDeepLink = `dracinku://auth?access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
-                setDeepLinkUrl(appDeepLink);
-
-                setTimeout(() => {
-                    // Try deep link first
-                    window.location.href = appDeepLink;
-
-                    // If deep link doesn't work (still on page after 1s), redirect to HTTPS callback
                     setTimeout(() => {
-                        window.location.href = mobileCallbackUrl;
-                    }, 1000);
-                }, 500);
+                        window.location.href = appDeepLink;
+                        setTimeout(() => {
+                            window.location.href = mobileCallbackUrl;
+                        }, 1000);
+                    }, 500);
+                } else {
+                    // For web browser: Simply redirect to homepage
+                    setTimeout(() => router.push('/'), 1000);
+                }
 
             } else if (code) {
                 // Code-based flow (PKCE) - exchange code for session
@@ -78,18 +82,21 @@ function AuthCallbackContent() {
                     setStatus('success');
                     setMessage('Login berhasil!');
 
-                    // Redirect to mobile-callback with fresh tokens
-                    const mobileCallbackUrl = `https://dracinbos.vercel.app/auth/mobile-callback?access_token=${encodeURIComponent(data.session.access_token)}&refresh_token=${encodeURIComponent(data.session.refresh_token)}`;
+                    if (isNativeApp) {
+                        const mobileCallbackUrl = `https://dracinbos.vercel.app/auth/mobile-callback?access_token=${encodeURIComponent(data.session.access_token)}&refresh_token=${encodeURIComponent(data.session.refresh_token)}`;
+                        const appDeepLink = `dracinku://auth?access_token=${encodeURIComponent(data.session.access_token)}&refresh_token=${encodeURIComponent(data.session.refresh_token)}`;
+                        setDeepLinkUrl(appDeepLink);
 
-                    const appDeepLink = `dracinku://auth?access_token=${encodeURIComponent(data.session.access_token)}&refresh_token=${encodeURIComponent(data.session.refresh_token)}`;
-                    setDeepLinkUrl(appDeepLink);
-
-                    setTimeout(() => {
-                        window.location.href = appDeepLink;
                         setTimeout(() => {
-                            window.location.href = mobileCallbackUrl;
-                        }, 1000);
-                    }, 500);
+                            window.location.href = appDeepLink;
+                            setTimeout(() => {
+                                window.location.href = mobileCallbackUrl;
+                            }, 1000);
+                        }, 500);
+                    } else {
+                        // For web browser: Simply redirect to homepage
+                        setTimeout(() => router.push('/'), 1000);
+                    }
                 } else {
                     throw new Error('No session returned');
                 }
