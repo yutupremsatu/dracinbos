@@ -12,7 +12,7 @@ import {
     Activity,
     TrendingUp
 } from "lucide-react";
-import { AdminLayout } from "../components/AdminLayout";
+import { AdminLayout } from "@/app/admin/components/AdminLayout";
 
 interface Stats {
     totalDramas: number;

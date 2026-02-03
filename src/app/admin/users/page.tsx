@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Users, Trash2, Mail, Calendar } from "lucide-react";
-import { AdminLayout } from "../components/AdminLayout";
+import { AdminLayout } from "@/app/admin/components/AdminLayout";
 
 export default function AdminUsersPage() {
     const router = useRouter();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AdminLayout } from "../components/AdminLayout";
+import { AdminLayout } from "@/app/admin/components/AdminLayout";
 import { Trash2, Search, ExternalLink, Eye } from "lucide-react";
 
 export default function AdminContentPage() {

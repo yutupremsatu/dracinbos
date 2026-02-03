@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AdminLayout } from "../components/AdminLayout";
+import { AdminLayout } from "@/app/admin/components/AdminLayout";
 import { Settings, Save } from "lucide-react";
 
 export default function AdminSettingsPage() {
