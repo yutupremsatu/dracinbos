@@ -45,6 +45,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return () => subscription.unsubscribe();
     }, []);
 
+    // Handle Deep Links (for Native Login Callback)
+    useEffect(() => {
+        if (Capacitor.isNativePlatform()) {
+            import('@capacitor/app').then(({ App }) => {
+                App.addListener('appUrlOpen', async (data) => {
+                    console.log('App opened with URL:', data.url);
+                    if (data.url.includes('auth/callback')) {
+                        // Extract code from URL (https://dracinbos.vercel.app/auth/callback?code=...)
+                        const url = new URL(data.url);
+                        const code = url.searchParams.get('code');
+
+                        if (code) {
+                            // Close In-App Browser if open
+                            try {
+                                const { Browser } = await import('@capacitor/browser');
+                                await Browser.close();
+                            } catch (e) { console.log('Browser close error (harmless):', e); }
+
+                            // Exchange code for session
+                            const { error } = await supabase.auth.exchangeCodeForSession(code);
+                            if (error) {
+                                alert('Login Error: ' + error.message);
+                            } else {
+                                // Success! Session state listener will pick it up
+                                console.log('Native Login Success!');
+                            }
+                        }
+                    }
+                });
+            });
+        }
+    }, []);
+
     const syncUserToDatabase = async (user: User) => {
         try {
             const { error } = await supabase.from("users").upsert({

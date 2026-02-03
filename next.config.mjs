@@ -12,6 +12,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    unoptimized: true, // Required for static export
     remotePatterns: [
       {
         protocol: "https",
@@ -19,6 +20,7 @@ const nextConfig = {
       },
     ],
   },
+  output: "export", // Required for Capacitor local loading
 };
 
 export default nextConfig;
