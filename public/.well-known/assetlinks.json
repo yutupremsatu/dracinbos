@@ -1,0 +1,14 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.dracinku.app",
+            "sha256_cert_fingerprints": [
+                "FC:64:A7:BF:22:86:E0:8E:4D:B1:A1:8C:20:DD:20:9C:4D:9E:CE:64:27:4F:28:E0:C1:8B:85:31:D3:6D:4D:AA"
+            ]
+        }
+    }
+]

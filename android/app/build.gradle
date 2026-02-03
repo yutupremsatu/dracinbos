@@ -18,10 +18,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file("release-key.jks")
-            storePassword "dracinku123"
+            storeFile file("dracinku-release.jks")
+            storePassword "Gacor123"
             keyAlias "dracinku"
-            keyPassword "dracinku123"
+            keyPassword "Gacor123"
         }
     }
 
