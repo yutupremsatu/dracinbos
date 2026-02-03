@@ -13,6 +13,8 @@ export async function GET(request: Request) {
       .from('dramas')
       .select('*')
       .eq('platform', platform)
+      .not('cover_url', 'is', null)
+      .neq('cover_url', '')
       .order('updated_at', { ascending: false })
       .limit(20);
 

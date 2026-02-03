@@ -1,0 +1,9 @@
+android/
+android_sdk/
+*.zip
+*.apk
+*.jks
+node_modules/
+.next/
+.git/
+scripts/

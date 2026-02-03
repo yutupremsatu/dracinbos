@@ -13,7 +13,8 @@ export async function GET(request: Request) {
       .from('dramas')
       .select('*')
       .eq('platform', platform)
-      .eq('platform', platform)
+      .not('cover_url', 'is', null)
+      .neq('cover_url', '')
       .limit(50); // Fetch more to shuffle
 
     if (error) {

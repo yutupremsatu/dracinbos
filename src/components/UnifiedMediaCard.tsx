@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Play } from "lucide-react";
 
 export interface BadgeConfig {
@@ -49,20 +50,21 @@ export function UnifiedMediaCard({
     >
       {/* Visual Container */}
       <div className="aspect-[2/3] relative overflow-hidden rounded-xl bg-muted/20">
-        <img
+        <Image
           src={
             cover?.startsWith('//')
               ? `https:${cover}`
               : cover?.includes(".heic")
                 ? `https://wsrv.nl/?url=${encodeURIComponent(cover)}&output=jpg`
-                : cover
+                : cover || "https://placehold.co/400x600/1a1a1a/ffffff?text=No+Poster"
           }
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          loading="lazy"
-          referrerPolicy="no-referrer"
+          fill
+          sizes="(max-width: 768px) 33vw, 20vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-110"
           onError={(e) => {
-            (e.target as HTMLImageElement).src = "https://placehold.co/400x600/1a1a1a/ffffff?text=No+Poster";
+            // Minimal fallback handled by src logic mostly, but complex state not worth heavier load here
+            // We rely on the repair script to fix broken URLs
           }}
         />
 
