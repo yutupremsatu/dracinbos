@@ -97,14 +97,22 @@ export function Header() {
 
               {/* Logo */}
               <Link href="/" className="flex items-center gap-3 group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-red-500 to-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary/25">
-                  <Play className="w-5 h-5 text-white fill-white" />
+                {/* Neon Cyberpunk Logo */}
+                <div className="relative w-10 h-10 group-hover:scale-110 transition-transform duration-300">
+                  <div className="absolute inset-0 bg-red-500/50 rounded-xl blur-lg group-hover:blur-xl transition-all" />
+                  <Image
+                    src="/logo.png"
+                    alt="Dracinku"
+                    width={40}
+                    height={40}
+                    className="relative rounded-xl"
+                  />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-display font-bold text-xl leading-none bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">
+                  <span className="font-display font-bold text-xl leading-none text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-pink-500 to-purple-500" style={{ textShadow: '0 0 20px rgba(239,68,68,0.5), 0 0 40px rgba(236,72,153,0.3)' }}>
                     Dracinku
                   </span>
-                  <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
+                  <span className="text-[10px] text-cyan-400 font-medium tracking-wider uppercase" style={{ textShadow: '0 0 10px rgba(34,211,238,0.5)' }}>
                     Premium Drama
                   </span>
                 </div>
@@ -154,8 +162,11 @@ export function Header() {
           <aside className="fixed top-0 left-0 bottom-0 w-72 bg-[#0a0a0a] border-r border-white/10 z-[70] p-6 animate-in slide-in-from-left duration-300 flex flex-col">
             <div className="flex items-center justify-between mb-10">
               <Link href="/" className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold">D</div>
-                <span className="text-xl font-bold text-white">Dracinku</span>
+                <div className="relative w-8 h-8">
+                  <div className="absolute inset-0 bg-red-500/40 rounded-lg blur-md" />
+                  <Image src="/logo.png" alt="Dracinku" width={32} height={32} className="relative rounded-lg" />
+                </div>
+                <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-500" style={{ textShadow: '0 0 15px rgba(239,68,68,0.4)' }}>Dracinku</span>
               </Link>
               <button onClick={() => setSidebarOpen(false)} className="text-gray-400 hover:text-white">
                 <X className="w-6 h-6" />

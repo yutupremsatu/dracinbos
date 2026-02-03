@@ -16,10 +16,11 @@ export function Footer() {
     <footer className="border-t border-border/50 bg-background/80 backdrop-blur-sm">
       <div className="flex flex-col items-center justify-center gap-2">
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center shadow-lg shadow-primary/25">
-            <span className="text-white font-bold text-lg">D</span>
+          <div className="relative w-8 h-8">
+            <div className="absolute inset-0 bg-red-500/40 rounded-lg blur-md" />
+            <img src="/logo.png" alt="Dracinku" className="relative w-8 h-8 rounded-lg" />
           </div>
-          <span className="font-bold text-lg text-white">Dracinku</span>
+          <span className="font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-500" style={{ textShadow: '0 0 15px rgba(239,68,68,0.4)' }}>Dracinku</span>
         </div>
 
         <p className="text-xs text-muted-foreground/60 text-center max-w-sm leading-relaxed">

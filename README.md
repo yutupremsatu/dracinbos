@@ -1,8 +1,8 @@
-# DracinBox
+# Dracinku
 
 ![Preview](public/preview.png)
 
-DracinBox adalah platform streaming drama pendek premium modern. Dibangun dengan teknologi web terkini untuk performa maksimal dan pengalaman pengguna yang premium.
+Dracinku adalah platform streaming drama pendek premium modern. Dibangun dengan teknologi web terkini untuk performa maksimal dan pengalaman pengguna yang premium.
 
 ## Fitur Utama
 -   **Nonton Gratis**: Akses ribuan drama pendek tanpa biaya.
@@ -41,3 +41,6 @@ Ikuti langkah-langkah berikut untuk menjalankan project ini:
 -   Tailwind CSS
 -   Lucide Icons
 -   HLS.js (Video Streaming)
+
+## Credits
+Developed by [@yutupremsatu](https://github.com/yutupremsatu)
